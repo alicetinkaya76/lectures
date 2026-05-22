@@ -1,0 +1,3142 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hz. İbrahim (a.s.), Tevhidin Atası</title>
+
+<!-- Google Fonts: Cormorant Garamond + SC (display), EB Garamond (body), Amiri (Arapça), Cinzel (akcentler), Italiana (kapak için sofistike) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=Cormorant+SC:wght@400;500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Italiana&family=Cardo:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+<!-- Leaflet (suluboya harita için) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
+<style>
+/* ================================================
+   TEMEL DEĞİŞKENLER VE RESET
+   ================================================ */
+:root {
+  /* Parşömen tonları, daha derin, daha incelikli */
+  --parchment: #f5ecd4;
+  --parchment-light: #faf3e0;
+  --parchment-deep: #e6d6a8;
+  --parchment-shadow: #c9b378;
+
+  /* Mürekkep, antik el yazması koyuluğunda */
+  --ink: #1f140c;
+  --ink-soft: #3d2618;
+  --ink-muted: #5a3e2a;
+  --ink-faded: #826448;
+
+  /* Accent renkler, sofistike palet */
+  --burgundy: #6b1a1f;
+  --burgundy-deep: #4a0f14;
+  --burgundy-faded: #8a3c40;
+
+  --gold: #9c7427;
+  --gold-bright: #b8902f;
+  --gold-soft: #c9a85a;
+
+  /* Yeni accent: derin lacivert (gece, hikmet rengi) */
+  --midnight: #1a2940;
+  --midnight-soft: #2c3e5c;
+
+  /* Zümrüt, tasavvuf, sükûnet */
+  --emerald: #2a4a3a;
+  --emerald-soft: #3a5e4c;
+
+  /* Gümüşi-gri, incelik */
+  --silver: #8a857a;
+  --silver-soft: #b5ad9e;
+
+  /* Çizgiler */
+  --rule: rgba(31, 20, 12, 0.16);
+  --rule-strong: rgba(31, 20, 12, 0.32);
+  --rule-gold: rgba(156, 116, 39, 0.4);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  font-family: 'EB Garamond', 'Cardo', Georgia, serif;
+  font-weight: 400;
+  font-size: 1.12rem;
+  line-height: 1.78;
+  color: var(--ink);
+  font-feature-settings: "kern" 1, "liga" 1, "onum" 1, "dlig" 1;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: rgba(107, 26, 31, 0.15);
+  overflow-x: hidden;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 5%, rgba(156, 116, 39, 0.07) 0%, transparent 55%),
+    radial-gradient(ellipse 55% 65% at 85% 95%, rgba(107, 26, 31, 0.05) 0%, transparent 55%),
+    radial-gradient(ellipse 45% 35% at 50% 50%, rgba(201, 179, 120, 0.35) 0%, transparent 75%),
+    linear-gradient(140deg, var(--parchment) 0%, var(--parchment-deep) 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  padding: 0;
+}
+
+/* Metin seçim rengi */
+::selection { background: rgba(156, 116, 39, 0.25); color: var(--ink); }
+
+/* Görseller asla taşmasın */
+img, svg, .gallery-svg { max-width: 100%; }
+
+/* Kâğıt dokusu noise */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.4 0 0 0 0 0.3 0 0 0 0 0.2 0 0 0 0.06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  opacity: 0.4;
+  mix-blend-mode: multiply;
+  z-index: 1;
+}
+
+.lesson-book {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 2rem 6rem;
+}
+
+/* ================================================
+   KAPAK, Sofistike el yazması kitabı estetiği
+   ================================================ */
+.cover {
+  min-height: 95vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 4rem 1rem;
+  position: relative;
+  page-break-after: always;
+}
+
+.cover::before, .cover::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  width: 1px;
+  height: 80px;
+  background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+  transform: translateX(-50%);
+}
+.cover::before { top: 10%; }
+.cover::after { bottom: 10%; }
+
+.cover h1 {
+  font-family: 'Italiana', 'Cormorant Garamond', serif;
+  font-weight: 400;
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  line-height: 1;
+  color: var(--ink);
+  margin-bottom: 0;
+  letter-spacing: 0.01em;
+}
+
+.cover h1 em {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 0.45em;
+  color: var(--burgundy);
+  display: inline-block;
+  margin-left: 0.3em;
+  vertical-align: 0.3em;
+  letter-spacing: 0.05em;
+}
+
+.cover .arabic-flourish {
+  font-family: 'Amiri', serif;
+  font-size: 2.8rem;
+  font-weight: 400;
+  color: var(--burgundy);
+  margin: 2rem 0 1.5rem;
+  direction: rtl;
+  position: relative;
+  display: inline-block;
+}
+
+.cover .arabic-flourish::before,
+.cover .arabic-flourish::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 60px;
+  height: 1px;
+  background: var(--gold);
+  opacity: 0.5;
+}
+.cover .arabic-flourish::before { left: -90px; }
+.cover .arabic-flourish::after { right: -90px; }
+
+.cover .subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.4rem;
+  line-height: 1.5;
+  color: var(--ink-muted);
+  margin: 1rem auto 0;
+  max-width: 580px;
+  letter-spacing: 0.01em;
+}
+
+/* Kapak tezhip ornament, SVG ile süslü çerçeve */
+.cover-ornament-svg {
+  margin: 3rem auto 0;
+  display: block;
+  opacity: 0.7;
+}
+
+/* ================================================
+   İÇİNDEKİLER, Eski kitap stilinde
+   ================================================ */
+.toc {
+  background:
+    linear-gradient(180deg, rgba(255, 250, 240, 0.6), rgba(250, 243, 224, 0.3));
+  border: 1px solid var(--rule-gold);
+  padding: 3.5rem 3rem 3rem;
+  margin: 5rem 0;
+  position: relative;
+  box-shadow:
+    inset 0 0 0 1px rgba(156, 116, 39, 0.12),
+    inset 0 0 0 8px var(--parchment-light);
+}
+
+.toc::before {
+  content: 'İçindekiler';
+  position: absolute;
+  top: -0.85rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--parchment);
+  padding: 0 1.5rem;
+  font-family: 'Cormorant SC', 'Cinzel', serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.35em;
+  color: var(--burgundy);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.toc ol {
+  list-style: none;
+  counter-reset: toc-counter;
+}
+
+.toc li {
+  counter-increment: toc-counter;
+  padding: 0.7rem 0;
+  border-bottom: 1px dotted var(--rule-gold);
+  display: flex;
+  align-items: baseline;
+  font-size: 1.15rem;
+}
+
+.toc li:last-child { border-bottom: none; }
+
+.toc li::before {
+  content: counter(toc-counter, upper-roman);
+  font-family: 'Cormorant SC', 'Cinzel', serif;
+  color: var(--gold-bright);
+  margin-right: 1.5rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  min-width: 50px;
+  font-weight: 500;
+}
+
+.toc a {
+  color: var(--ink);
+  text-decoration: none;
+  flex: 1;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.1rem;
+  transition: color 0.25s ease;
+  letter-spacing: 0.005em;
+}
+
+.toc a:hover { color: var(--burgundy); }
+
+.toc .toc-page {
+  color: var(--gold);
+  font-family: 'Cormorant SC', serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* ================================================
+   BÖLÜM BAŞLIKLARI
+   ================================================ */
+section {
+  margin: 6rem 0 3rem;
+  position: relative;
+}
+
+.section-num {
+  font-family: 'Cormorant SC', 'Cinzel', serif;
+  color: var(--burgundy);
+  font-size: 0.85rem;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  font-weight: 500;
+}
+
+.section-num::before {
+  content: '';
+  width: 50px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--burgundy));
+  flex-shrink: 0;
+}
+
+.section-num::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, var(--rule-gold), transparent);
+  max-width: 200px;
+}
+
+h2 {
+  font-family: 'Italiana', 'Cormorant Garamond', serif;
+  font-weight: 400;
+  font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+  line-height: 1.1;
+  color: var(--ink);
+  margin-bottom: 1rem;
+  letter-spacing: 0.005em;
+}
+
+h2 .h2-sub {
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 0.5em;
+  color: var(--burgundy-faded);
+  margin-top: 0.5rem;
+  letter-spacing: 0.02em;
+}
+
+/* Bölüm başlığı altındaki süslü çizgi */
+h2::after {
+  content: '❖';
+  display: block;
+  text-align: left;
+  color: var(--gold);
+  font-size: 1rem;
+  margin-top: 1.2rem;
+  letter-spacing: 1.5em;
+  opacity: 0.6;
+}
+
+h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 500;
+  font-style: italic;
+  font-size: 1.65rem;
+  color: var(--ink);
+  margin: 2.8rem 0 0.8rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--rule-gold);
+  letter-spacing: 0.005em;
+}
+
+h3::first-letter {
+  color: var(--burgundy);
+}
+
+h4 {
+  font-family: 'Cormorant SC', 'Cinzel', serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--burgundy);
+  margin: 1.8rem 0 0.6rem;
+}
+
+.section-time {
+  display: inline-block;
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  color: var(--ink-muted);
+  background: rgba(166, 124, 46, 0.12);
+  padding: 0.3rem 0.8rem;
+  border: 1px solid rgba(166, 124, 46, 0.3);
+  border-radius: 2px;
+  margin-bottom: 2rem;
+}
+
+/* ================================================
+   PARAGRAFLAR VE TEMEL TYPOGRAFI
+   ================================================ */
+p {
+  margin: 0 0 1.2rem;
+  text-align: justify;
+  hyphens: auto;
+  font-feature-settings: "kern" 1, "liga" 1, "onum" 1;
+}
+
+p.lead {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.35rem;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin: 1.8rem 0 2.2rem;
+  text-align: left;
+  padding-left: 1.5rem;
+  border-left: 2px solid var(--burgundy);
+  letter-spacing: 0.005em;
+}
+
+p.dropcap::first-letter {
+  font-family: 'Italiana', 'Cormorant Garamond', serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 5.2em;
+  float: left;
+  line-height: 0.82;
+  padding: 0.35rem 0.65rem 0 0;
+  color: var(--burgundy);
+  letter-spacing: -0.02em;
+}
+
+/* ================================================
+   EPİGRAF, Her bölüm başına şiirsel/Kuranî alıntı
+   ================================================ */
+.epigraph {
+  margin: 1.5rem 0 3rem;
+  padding: 1.5rem 0;
+  text-align: center;
+  max-width: 580px;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+}
+
+.epigraph::before, .epigraph::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+}
+.epigraph::before { top: 0; }
+.epigraph::after { bottom: 0; }
+
+.epigraph-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.15rem;
+  line-height: 1.65;
+  color: var(--ink-muted);
+  margin: 0 0 0.6rem;
+}
+
+.epigraph-text.arabic {
+  font-family: 'Amiri', serif;
+  font-style: normal;
+  font-size: 1.4rem;
+  color: var(--burgundy);
+  direction: rtl;
+  margin-bottom: 1rem;
+}
+
+.epigraph-cite {
+  font-family: 'Cormorant SC', 'Cinzel', serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.32em;
+  color: var(--gold);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.epigraph-cite::before {
+  content: '';
+  color: var(--silver);
+}
+
+/* ================================================
+   PULL QUOTE, Bölüm geçişlerinde büyük edebî alıntı
+   ================================================ */
+.pull-quote {
+  margin: 3.5rem auto;
+  max-width: 720px;
+  text-align: center;
+  padding: 2rem 1rem;
+  position: relative;
+}
+
+.pull-quote::before {
+  content: '“';
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 5rem;
+  color: var(--burgundy);
+  opacity: 0.25;
+  line-height: 0.5;
+  margin-bottom: 0.5rem;
+}
+
+.pull-quote-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.55rem;
+  line-height: 1.5;
+  color: var(--ink);
+  letter-spacing: 0.005em;
+}
+
+.pull-quote-text strong {
+  font-style: normal;
+  font-weight: 500;
+  color: var(--burgundy);
+}
+
+.pull-quote-attr {
+  display: block;
+  margin-top: 1.2rem;
+  font-family: 'Cormorant SC', 'Cinzel', serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.3em;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+.pull-quote-attr::before {
+  content: '';
+}
+
+/* ================================================
+   MARJİNALİA, Sağ kenarda klasik tefsir tarzı not
+   ================================================ */
+.marginalia-wrapper {
+  position: relative;
+}
+
+.marginalia {
+  position: absolute;
+  right: -180px;
+  top: 0;
+  width: 160px;
+  padding: 0.6rem 0.8rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--ink-muted);
+  border-right: 2px solid var(--gold);
+  background: rgba(245, 236, 212, 0.4);
+}
+
+.marginalia-term {
+  display: block;
+  font-family: 'Amiri', serif;
+  font-style: normal;
+  font-size: 1.1rem;
+  color: var(--burgundy);
+  direction: rtl;
+  margin-bottom: 0.3rem;
+}
+
+.marginalia-arabic-inline {
+  font-family: 'Amiri', serif;
+  font-style: normal;
+  color: var(--burgundy);
+  direction: rtl;
+  unicode-bidi: isolate;
+  margin: 0 0.2rem;
+}
+
+/* Mobilde marjinalia inline'a düşer */
+@media (max-width: 1180px) {
+  .marginalia {
+    position: static;
+    width: 100%;
+    margin: 1rem 0;
+    border-right: none;
+    border-left: 3px solid var(--gold);
+    background: rgba(156, 116, 39, 0.06);
+  }
+}
+
+/* ================================================
+   ILLUMINATED DROP CAP, El yazması başlangıcı
+   ================================================ */
+p.illuminated::first-letter {
+  font-family: 'Italiana', serif;
+  float: left;
+  font-size: 6.5em;
+  line-height: 0.85;
+  padding: 0.35rem 0.7rem 0 0.55rem;
+  margin: 0.2rem 0.4rem 0 0;
+  color: var(--burgundy);
+  background:
+    linear-gradient(135deg, rgba(156, 116, 39, 0.12), rgba(107, 26, 31, 0.08));
+  border: 1px solid var(--rule-gold);
+  box-shadow:
+    inset 0 0 0 4px var(--parchment-light),
+    inset 0 0 0 5px var(--rule-gold),
+    0 1px 3px rgba(31, 20, 12, 0.1);
+  letter-spacing: -0.05em;
+}
+
+/* ================================================
+   ORNAMENT, Süslü ayırıcı (filigree divider)
+   ================================================ */
+.ornament-divider {
+  display: block;
+  margin: 3rem auto;
+  text-align: center;
+  color: var(--gold);
+  opacity: 0.75;
+}
+
+.ornament-divider svg {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* ================================================
+   YAZARI BELİRSİZ Kİ ALIM ARAPÇA TEXT inline
+   ================================================ */
+.arabic-inline {
+  font-family: 'Amiri', serif;
+  color: var(--burgundy);
+  direction: rtl;
+  unicode-bidi: isolate;
+  font-size: 1.1em;
+}
+
+strong { color: var(--ink); font-weight: 700; }
+em { color: var(--ink-soft); }
+
+a { color: var(--burgundy); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { color: var(--burgundy-deep); }
+
+/* ================================================
+   AYET KUTULARI, El yazması Kuran sayfası hissi
+   ================================================ */
+.ayet {
+  margin: 2.2rem 0;
+  padding: 2.2rem 2.5rem 2rem;
+  background:
+    linear-gradient(135deg, rgba(250, 243, 224, 0.85), rgba(245, 236, 212, 0.6));
+  border: 1px solid var(--rule-gold);
+  position: relative;
+  box-shadow:
+    inset 0 0 0 1px rgba(156, 116, 39, 0.15),
+    inset 0 0 0 6px var(--parchment-light),
+    0 1px 4px rgba(31, 20, 12, 0.06);
+}
+
+/* Köşe süslemeleri */
+.ayet::before,
+.ayet::after {
+  content: '';
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-style: solid;
+  border-color: var(--gold);
+  opacity: 0.6;
+}
+.ayet::before {
+  top: 12px; left: 12px;
+  border-width: 1px 0 0 1px;
+}
+.ayet::after {
+  bottom: 12px; right: 12px;
+  border-width: 0 1px 1px 0;
+}
+
+.ayet .ayet-ref {
+  font-family: 'Cormorant SC', 'Cinzel', serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.3em;
+  color: var(--gold-bright);
+  margin-bottom: 1.2rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.ayet .ayet-ref::before, .ayet .ayet-ref::after {
+  content: ' ❖ ';
+  color: var(--gold);
+  opacity: 0.5;
+}
+
+.ayet .arabic {
+  font-family: 'Amiri', serif;
+  font-weight: 400;
+  font-size: 1.7rem;
+  line-height: 2.1;
+  color: var(--ink);
+  text-align: center;
+  direction: rtl;
+  margin: 1rem 0 1.2rem;
+  letter-spacing: 0;
+}
+
+.ayet .meal {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.1rem;
+  line-height: 1.65;
+  color: var(--ink-soft);
+  text-align: center;
+  margin-top: 1.2rem;
+  padding-top: 1.2rem;
+  position: relative;
+  letter-spacing: 0.005em;
+}
+
+.ayet .okunus {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--burgundy-faded);
+  text-align: center;
+  margin-top: 1rem;
+  padding-top: 0.9rem;
+  position: relative;
+  letter-spacing: 0.02em;
+}
+
+.ayet .okunus::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 1px;
+  background: var(--rule-gold);
+}
+
+.ayet .meal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 1px;
+  background: var(--rule-gold);
+}
+
+/* ================================================
+   HADİS KUTULARI, Sofistike
+   ================================================ */
+.hadis {
+  margin: 2.2rem 0;
+  padding: 1.8rem 2.2rem 1.6rem;
+  background:
+    linear-gradient(180deg, rgba(107, 26, 31, 0.03), rgba(107, 26, 31, 0.05));
+  border: 1px solid rgba(107, 26, 31, 0.18);
+  border-left: 3px solid var(--burgundy);
+  position: relative;
+}
+
+.hadis-label {
+  display: inline-block;
+  font-family: 'Cormorant SC', 'Cinzel', serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  background: var(--burgundy);
+  color: var(--parchment-light);
+  padding: 0.35rem 1rem;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.hadis-ref {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--burgundy-deep);
+  font-weight: 500;
+  margin-bottom: 1rem;
+  letter-spacing: 0.01em;
+  line-height: 1.5;
+}
+
+.hadis-text {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.08rem;
+  color: var(--ink);
+  line-height: 1.78;
+}
+
+.hadis-text q::before { content: '“'; font-size: 1.6em; color: var(--burgundy); vertical-align: -0.15em; margin-right: 0.05em; }
+.hadis-text q::after { content: '”'; font-size: 1.6em; color: var(--burgundy); vertical-align: -0.15em; margin-left: 0.05em; }
+
+/* ================================================
+   AKADEMİK DİKKAT NOTU, Sofistike
+   ================================================ */
+.dikkat {
+  margin: 2rem 0;
+  padding: 1.4rem 1.8rem;
+  background: linear-gradient(135deg, rgba(156, 116, 39, 0.05), rgba(156, 116, 39, 0.1));
+  border-left: 3px solid var(--gold);
+  border-radius: 0 2px 2px 0;
+  font-size: 1rem;
+  position: relative;
+}
+
+.dikkat-label {
+  display: block;
+  font-family: 'Cormorant SC', 'Cinzel', serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.32em;
+  color: var(--gold-bright);
+  font-weight: 700;
+  margin-bottom: 0.6rem;
+  text-transform: uppercase;
+}
+
+/* ================================================
+   ÖĞRETMEN NOTU / ETKİNLİK, Daha incelikli mavi
+   ================================================ */
+.etkinlik {
+  margin: 2rem 0;
+  padding: 1.8rem 2rem;
+  background:
+    linear-gradient(135deg, rgba(26, 41, 64, 0.04), rgba(26, 41, 64, 0.07));
+  border: 1px solid rgba(26, 41, 64, 0.2);
+  border-left: 3px solid var(--midnight);
+}
+
+.etkinlik-title {
+  font-family: 'Cormorant SC', 'Cinzel', serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.3em;
+  color: var(--midnight);
+  font-weight: 700;
+  margin-bottom: 0.9rem;
+  text-transform: uppercase;
+}
+
+.etkinlik-title::before {
+  content: '◆ ';
+  font-size: 0.65em;
+  vertical-align: 0.2em;
+  margin-right: 0.3em;
+  color: var(--midnight-soft);
+}
+
+/* ================================================
+   SORU KUTUSU, Sofistike
+   ================================================ */
+.soru {
+  margin: 1.6rem 0;
+  padding: 1.3rem 1.6rem 1.3rem 3.4rem;
+  background: rgba(250, 243, 224, 0.55);
+  border-top: 1px solid var(--rule-gold);
+  border-bottom: 1px solid var(--rule-gold);
+  position: relative;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1.12rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+.soru::before {
+  content: '?';
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+  font-family: 'Italiana', serif;
+  font-style: normal;
+  font-size: 2.4rem;
+  font-weight: 400;
+  color: var(--burgundy);
+  line-height: 1;
+}
+
+/* ================================================
+   KÖPRÜ CÜMLESİ, Edebî
+   ================================================ */
+.kopru {
+  margin: 3rem auto;
+  max-width: 600px;
+  text-align: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.3rem;
+  line-height: 1.55;
+  color: var(--ink-muted);
+  position: relative;
+  padding: 1.5rem 0;
+  letter-spacing: 0.005em;
+}
+
+.kopru::before, .kopru::after {
+  content: '';
+  display: block;
+  width: 80px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+  margin: 1rem auto;
+  opacity: 0.6;
+}
+
+/* ================================================
+   TABLOLAR, Klasik kitap stilinde
+   ================================================ */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2.2rem 0;
+  font-size: 1rem;
+  background:
+    linear-gradient(180deg, rgba(250, 243, 224, 0.5), rgba(245, 236, 212, 0.3));
+  box-shadow:
+    inset 0 0 0 1px rgba(156, 116, 39, 0.15),
+    0 1px 4px rgba(31, 20, 12, 0.06);
+}
+
+table caption {
+  font-family: 'Cormorant SC', 'Cinzel', serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--burgundy);
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-align: left;
+  padding: 0 0.5rem;
+}
+
+table caption::before { content: '❖ '; color: var(--gold); }
+table caption::after { content: ' ❖'; color: var(--gold); }
+
+th {
+  background: var(--ink);
+  color: var(--parchment-light);
+  font-family: 'Cormorant SC', 'Cinzel', serif;
+  font-size: 0.76rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 1rem 1.1rem;
+  text-align: left;
+  font-weight: 500;
+  border-bottom: 2px solid var(--gold);
+}
+
+td {
+  padding: 1rem 1.1rem;
+  border-bottom: 1px solid var(--rule-gold);
+  vertical-align: top;
+  font-family: 'EB Garamond', serif;
+  line-height: 1.55;
+}
+
+tr:nth-child(even) td { background: rgba(201, 179, 120, 0.08); }
+tr:last-child td { border-bottom: none; }
+td strong { color: var(--burgundy); font-weight: 600; }
+
+/* ================================================
+   AKIŞ TABLOSU (özel stil)
+   ================================================ */
+.akis-tablo th:first-child,
+.akis-tablo td:first-child {
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  color: var(--burgundy);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ================================================
+   GÖRSEL GALERİSİ, ARKEOLOJİ
+   ================================================ */
+.gallery {
+  margin: 3rem 0;
+}
+
+.gallery-intro {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--ink-muted);
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2.2rem;
+  margin-top: 1.8rem;
+}
+
+.gallery-card {
+  background: var(--parchment-light);
+  padding: 0.9rem 0.9rem 1.2rem;
+  box-shadow:
+    inset 0 0 0 1px rgba(156, 116, 39, 0.12),
+    0 2px 5px rgba(31, 20, 12, 0.1),
+    0 12px 28px rgba(31, 20, 12, 0.06);
+  position: relative;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  border: 1px solid var(--rule-gold);
+}
+
+.gallery-card:nth-child(odd) { transform: rotate(-0.7deg); }
+.gallery-card:nth-child(even) { transform: rotate(0.6deg); }
+.gallery-card:hover {
+  transform: rotate(0) translateY(-5px);
+  z-index: 2;
+  box-shadow:
+    inset 0 0 0 1px rgba(156, 116, 39, 0.2),
+    0 4px 10px rgba(31, 20, 12, 0.15),
+    0 18px 40px rgba(31, 20, 12, 0.1);
+}
+
+.gallery-img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  background: var(--parchment-shadow);
+  filter: sepia(0.22) saturate(0.85) contrast(0.96) brightness(0.99);
+}
+
+/* Elle çizilmiş SVG illüstrasyonlar */
+.gallery-svg {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  display: block;
+  background: var(--parchment-shadow);
+}
+
+.gallery-caption {
+  padding: 1rem 0.4rem 0;
+  text-align: center;
+}
+
+.gallery-meta {
+  font-family: 'Cormorant SC', 'Cinzel', serif;
+  font-size: 0.66rem;
+  letter-spacing: 0.22em;
+  color: var(--gold-bright);
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+  font-weight: 500;
+}
+
+.gallery-title {
+  font-family: 'Italiana', 'Cormorant Garamond', serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 1.25rem;
+  color: var(--ink);
+  margin-bottom: 0.4rem;
+  line-height: 1.15;
+  letter-spacing: 0.005em;
+}
+
+.gallery-desc {
+  font-family: 'EB Garamond', serif;
+  font-size: 0.9rem;
+  color: var(--ink-muted);
+  font-style: italic;
+  line-height: 1.5;
+  text-align: left;
+}
+
+/* ================================================
+   HARİTA, HİCRET YOLCULUĞU
+   ================================================ */
+.map-section {
+  margin: 4rem 0;
+}
+
+.map-wrapper {
+  position: relative;
+  margin: 2rem 0;
+  padding: 1rem;
+  background: #fffaf0;
+  box-shadow: 0 10px 30px rgba(42,24,16,0.15);
+  border: 1px solid var(--rule-strong);
+}
+
+.map-wrapper::before,
+.map-wrapper::after {
+  content: '';
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background:
+    radial-gradient(circle at center, var(--gold) 30%, transparent 32%);
+  opacity: 0.5;
+}
+
+.map-wrapper::before { top: -1px; left: -1px; border-top: 2px solid var(--gold); border-left: 2px solid var(--gold); }
+.map-wrapper::after { bottom: -1px; right: -1px; border-bottom: 2px solid var(--gold); border-right: 2px solid var(--gold); }
+
+#hicret-map {
+  width: 100%;
+  height: 560px;
+  background:
+    radial-gradient(ellipse at center, #cfe0d4 0%, #b8d2c0 60%, #a0c0a8 100%);
+  border: 1px solid var(--rule);
+}
+
+/* Suluboya tile'larına ek yumuşatma (Cooper Hewitt zaten suluboya, hafif düzeltme) */
+.leaflet-tile-pane {
+  mix-blend-mode: multiply;
+  opacity: 0.97;
+}
+
+/* Son çare: OSM tile'ları yüklenirse onları suluboyaya benzet */
+.osm-watercolor-filter {
+  filter:
+    sepia(0.25)
+    saturate(0.65)
+    contrast(0.92)
+    brightness(1.08)
+    hue-rotate(-8deg)
+    blur(0.3px);
+  mix-blend-mode: multiply;
+}
+
+/* Leaflet kontrolleri ve popup'ı parşömen rengiyle uyumlu hale getir */
+.leaflet-control-zoom a {
+  background: var(--parchment) !important;
+  color: var(--ink) !important;
+  border-color: var(--rule-strong) !important;
+  font-family: 'Cinzel', serif !important;
+}
+.leaflet-control-zoom a:hover {
+  background: var(--parchment-deep) !important;
+}
+.leaflet-popup-content-wrapper {
+  background: #fffaf0 !important;
+  color: var(--ink) !important;
+  border-radius: 2px !important;
+  box-shadow: 0 4px 14px rgba(42,24,16,0.25) !important;
+}
+.leaflet-popup-tip {
+  background: #fffaf0 !important;
+}
+.leaflet-container {
+  font-family: 'EB Garamond', Georgia, serif !important;
+  background: #cfe0d4 !important;
+}
+.leaflet-control-attribution {
+  background: rgba(255,250,240,0.85) !important;
+  font-size: 10px !important;
+}
+
+.map-legend {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.2rem;
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background: rgba(255, 250, 235, 0.5);
+  border: 1px solid var(--rule);
+}
+
+.map-legend-item {
+  display: flex;
+  gap: 0.8rem;
+  align-items: flex-start;
+}
+
+.map-legend-num {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--burgundy);
+  color: var(--parchment);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.map-legend-text strong {
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  color: var(--ink);
+  font-style: italic;
+}
+
+.map-legend-text span {
+  font-size: 0.88rem;
+  color: var(--ink-muted);
+  line-height: 1.4;
+}
+
+/* Leaflet özel marker stili */
+.leaflet-marker-icon.hicret-marker {
+  background: var(--burgundy);
+  color: var(--parchment);
+  border: 3px solid #fffaf0;
+  border-radius: 50%;
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: 14px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.4);
+  text-align: center;
+}
+
+/* ================================================
+   ÜÇ YOLCULUK ŞEMASI
+   ================================================ */
+.iki-yolculuk {
+  margin: 2.5rem 0;
+  padding: 2rem 1.5rem;
+  background: linear-gradient(180deg, rgba(255,250,235,0.4), rgba(244,234,213,0.2));
+  border: 1px dashed var(--rule-strong);
+  border-radius: 4px;
+}
+
+.yolculuk-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin: 1rem 0;
+}
+
+.yolculuk-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--burgundy);
+  font-weight: 700;
+  min-width: 140px;
+  flex-shrink: 0;
+}
+
+.yolculuk-step {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--ink);
+  padding: 0.3rem 0.7rem;
+  background: rgba(166, 124, 46, 0.12);
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.yolculuk-arrow {
+  color: var(--gold);
+  font-weight: 700;
+}
+
+/* ================================================
+   GRUP ÇALIŞMASI KUTUSU, Sofistike
+   ================================================ */
+.grup-calisma {
+  margin: 2.2rem 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.grup-card {
+  padding: 1.6rem 1.4rem;
+  border: 1px solid var(--rule-gold);
+  background:
+    linear-gradient(180deg, rgba(250, 243, 224, 0.6), rgba(245, 236, 212, 0.3));
+  border-top: 3px solid;
+  position: relative;
+  box-shadow: inset 0 0 0 4px var(--parchment-light);
+}
+
+.grup-card:nth-child(1) { border-top-color: var(--burgundy); }
+.grup-card:nth-child(2) { border-top-color: var(--emerald); }
+.grup-card:nth-child(3) { border-top-color: var(--midnight); }
+
+.grup-name {
+  font-family: 'Cormorant SC', 'Cinzel', serif;
+  font-size: 0.82rem;
+  letter-spacing: 0.28em;
+  font-weight: 700;
+  margin-bottom: 0.9rem;
+  text-transform: uppercase;
+}
+
+.grup-card:nth-child(1) .grup-name { color: var(--burgundy); }
+.grup-card:nth-child(2) .grup-name { color: var(--emerald); }
+.grup-card:nth-child(3) .grup-name { color: var(--midnight); }
+
+.grup-name::before {
+  content: '◆ ';
+  font-size: 0.7em;
+  vertical-align: 0.15em;
+  opacity: 0.6;
+}
+
+.grup-task {
+  font-family: 'EB Garamond', serif;
+  font-size: 0.98rem;
+  line-height: 1.65;
+}
+
+/* ================================================
+   PANTEONUN TANRILARI, Antik kart estetiği
+   ================================================ */
+.panteon {
+  margin: 2.8rem 0;
+}
+
+.panteon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin: 1.8rem 0;
+}
+
+.panteon-card {
+  padding: 2rem 1.5rem 1.6rem;
+  background:
+    linear-gradient(170deg, rgba(255, 250, 240, 0.85), rgba(201, 179, 120, 0.2));
+  border: 1px solid var(--rule-gold);
+  position: relative;
+  text-align: center;
+  box-shadow:
+    inset 0 0 0 1px rgba(156, 116, 39, 0.1),
+    inset 0 0 0 5px var(--parchment-light),
+    0 1px 3px rgba(31, 20, 12, 0.06);
+}
+
+.panteon-symbol {
+  font-size: 2.6rem;
+  margin-bottom: 0.6rem;
+  display: block;
+  filter: sepia(0.5) saturate(0.6) brightness(0.95);
+  opacity: 0.85;
+}
+
+.panteon-name {
+  font-family: 'Italiana', 'Cormorant Garamond', serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 1.5rem;
+  color: var(--burgundy);
+  letter-spacing: 0.005em;
+}
+
+.panteon-meaning {
+  font-family: 'Cormorant SC', 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 0.5rem 0 0.8rem;
+  font-weight: 500;
+}
+
+.panteon-meaning::before, .panteon-meaning::after {
+  content: ' · ';
+  color: var(--silver);
+}
+
+.panteon-desc {
+  font-family: 'EB Garamond', serif;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--ink-muted);
+  text-align: left;
+  margin-top: 0.8rem;
+}
+
+/* ================================================
+   EDDEIYE / İDDİANAME, Bölüm 3'ün dramatik zirvesi
+   ================================================ */
+.iddiana {
+  margin: 3rem 0;
+  padding: 3rem 2.5rem 2.5rem;
+  background:
+    linear-gradient(180deg, rgba(245, 236, 212, 0.5), rgba(245, 236, 212, 0.2));
+  border: 1px solid var(--burgundy);
+  position: relative;
+  box-shadow:
+    inset 0 0 0 1px rgba(107, 26, 31, 0.15),
+    inset 0 0 0 6px var(--parchment-light),
+    0 2px 12px rgba(31, 20, 12, 0.08);
+}
+
+/* Kıvrımlı köşe süslemeleri */
+.iddiana::before, .iddiana::after {
+  content: '';
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border: 1.5px solid var(--burgundy);
+  opacity: 0.5;
+}
+.iddiana::before {
+  top: 14px; left: 14px;
+  border-right: none; border-bottom: none;
+}
+.iddiana::after {
+  bottom: 14px; right: 14px;
+  border-left: none; border-top: none;
+}
+
+.iddiana-header {
+  text-align: center;
+  font-family: 'Cormorant SC', 'Cinzel', serif;
+  font-size: 0.95rem;
+  letter-spacing: 0.38em;
+  color: var(--burgundy);
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 1.8rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid var(--rule-gold);
+  position: relative;
+}
+
+.iddiana-header::after {
+  content: '⚖';
+  display: block;
+  font-size: 1.4rem;
+  margin-top: 0.6rem;
+  opacity: 0.6;
+}
+
+.iddiana-step {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1.6rem;
+  margin: 1.8rem 0;
+  align-items: start;
+  padding: 1.2rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.iddiana-step:last-of-type { border-bottom: none; }
+
+.iddiana-num {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 30% 30%, var(--burgundy-faded), var(--burgundy));
+  color: var(--parchment-light);
+  font-family: 'Italiana', 'Cinzel', serif;
+  font-weight: 400;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow:
+    inset 0 0 0 2px var(--parchment-light),
+    inset 0 0 0 3px var(--burgundy),
+    0 2px 6px rgba(107, 26, 31, 0.3);
+}
+
+.iddiana-content h5 {
+  font-family: 'Italiana', 'Cormorant Garamond', serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1.45rem;
+  color: var(--ink);
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.005em;
+}
+
+.iddiana-content p {
+  font-size: 1.02rem;
+  margin: 0.4rem 0;
+  line-height: 1.65;
+}
+
+/* İddianame içi tam ayet kutusu */
+.iddiana-ayet {
+  margin: 0.8rem 0;
+  padding: 1rem 1.2rem;
+  background: rgba(156, 116, 39, 0.06);
+  border: 1px solid var(--rule-gold);
+  border-left: 3px solid var(--burgundy);
+}
+
+.iddiana-ayet .ia-ref {
+  font-family: 'Cormorant SC', 'Cinzel', serif;
+  font-size: 0.66rem;
+  letter-spacing: 0.22em;
+  color: var(--gold-bright);
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+}
+
+.iddiana-ayet .ia-ar {
+  font-family: 'Amiri', serif;
+  font-size: 1.3rem;
+  line-height: 2;
+  color: var(--ink);
+  text-align: right;
+  direction: rtl;
+  margin-bottom: 0.6rem;
+}
+
+.iddiana-ayet .ia-ok {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--burgundy-faded);
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.02em;
+}
+
+.iddiana-ayet .ia-tr {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+.iddiana-verdict {
+  margin-top: 2rem;
+  padding-top: 1.8rem;
+  border-top: 2px double var(--burgundy);
+  text-align: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1.45rem;
+  line-height: 1.5;
+  color: var(--burgundy-deep);
+  letter-spacing: 0.005em;
+}
+
+.iddiana-verdict strong {
+  font-style: normal;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* ================================================
+   ANAHTAR KAVRAMLAR
+   ================================================ */
+.anahtar-kavramlar {
+  margin: 2rem 0;
+  padding: 2rem;
+  background: rgba(255,250,235,0.5);
+  border: 1px solid var(--rule);
+  columns: 2;
+  column-gap: 2rem;
+  font-size: 0.95rem;
+}
+
+.anahtar-kavramlar p {
+  break-inside: avoid;
+  margin-bottom: 0.6rem;
+}
+
+.anahtar-kavramlar strong {
+  color: var(--burgundy);
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: 0.1rem;
+}
+
+/* ================================================
+   PUTLAR LİSTESİ, özel
+   ================================================ */
+.modern-putlar {
+  margin: 2rem 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.put-item {
+  padding: 1rem 1.2rem;
+  background: rgba(122,31,36,0.05);
+  border-left: 3px solid var(--burgundy);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.put-item strong {
+  color: var(--burgundy);
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  margin-bottom: 0.2rem;
+}
+
+/* ================================================
+   ÇIKIŞ KARTI
+   ================================================ */
+.cikis-karti {
+  margin: 3rem 0;
+  padding: 2rem 2.5rem;
+  background:
+    linear-gradient(135deg, rgba(255,250,235,0.8), rgba(244,234,213,0.5));
+  border: 2px dashed var(--burgundy);
+  text-align: center;
+  position: relative;
+}
+
+.cikis-karti::before {
+  content: '✂';
+  position: absolute;
+  top: -0.8rem;
+  left: 2rem;
+  background: var(--parchment);
+  padding: 0 0.5rem;
+  font-size: 1.3rem;
+  color: var(--burgundy);
+}
+
+.cikis-karti-title {
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.3em;
+  font-size: 0.9rem;
+  color: var(--burgundy);
+  margin-bottom: 1rem;
+}
+
+.cikis-karti-tamamla {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1.3rem;
+  color: var(--ink-soft);
+}
+
+/* ================================================
+   KAYNAKÇA
+   ================================================ */
+.kaynakca {
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.kaynakca h4 {
+  margin-top: 1.5rem;
+}
+
+.kaynakca ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.kaynakca li {
+  padding: 0.4rem 0 0.4rem 1.2rem;
+  position: relative;
+  border-bottom: 1px dotted var(--rule);
+}
+
+.kaynakca li::before {
+  content: '◇';
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+  font-size: 0.8rem;
+}
+
+/* ================================================
+   AYIRAÇ / DİVİDER, Sofistike filigree
+   ================================================ */
+.divider {
+  text-align: center;
+  margin: 4rem 0 3rem;
+  position: relative;
+  height: 24px;
+}
+
+.divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 240px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--rule-gold), transparent);
+  transform: translate(-50%, -50%);
+}
+
+.divider::after {
+  content: '✤';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--parchment);
+  padding: 0 1.2rem;
+  color: var(--gold);
+  font-size: 1.4rem;
+  opacity: 0.7;
+}
+
+/* ================================================
+   YAZDIRMA STİLİ
+   ================================================ */
+@media print {
+  body { background: white; }
+  body::before { display: none; }
+  .lesson-book { max-width: 100%; padding: 0; }
+  .cover { min-height: auto; padding: 2rem; }
+  section { page-break-inside: avoid; margin: 2rem 0; }
+  h2 { page-break-after: avoid; }
+  #hicret-map { display: none; }
+  .map-wrapper::after { content: '(İnteraktif harita yalnızca dijital sürümde görüntülenir.)'; font-style: italic; }
+  a { color: var(--ink); text-decoration: none; }
+  .gallery-card { box-shadow: none; }
+}
+
+/* ================================================
+   MOBİL
+   ================================================ */
+/* ================================================
+   RESPONSIVE, TABLET (≤768px)
+   ================================================ */
+@media (max-width: 768px) {
+  /* iOS'ta fixed arka plan jank ve siyah ekran yapar */
+  body { background-attachment: scroll; }
+  body::before { position: absolute; }
+
+  .lesson-book { padding: 0 1.4rem 4rem; }
+  body { font-size: 1.06rem; line-height: 1.74; }
+
+  section { margin: 4rem 0 2.5rem; }
+
+  /* Başlıklar */
+  h2 { font-size: clamp(1.9rem, 7vw, 2.6rem); }
+  h2::after { letter-spacing: 1em; }
+  h3 { font-size: 1.45rem; }
+  .section-num { letter-spacing: 0.3em; }
+  .section-num::after { max-width: 120px; }
+
+  /* Kapak */
+  .cover { min-height: 88vh; padding: 3rem 1rem; }
+  .cover h1 { font-size: clamp(2.6rem, 12vw, 4rem); }
+  .cover .arabic-flourish { font-size: 2.3rem; }
+  .cover .arabic-flourish::before,
+  .cover .arabic-flourish::after { width: 40px; }
+  .cover .arabic-flourish::before { left: -60px; }
+  .cover .arabic-flourish::after { right: -60px; }
+  .cover .subtitle { font-size: 1.2rem; }
+
+  /* Ayet kutuları */
+  .ayet { padding: 1.8rem 1.5rem 1.6rem; }
+  .ayet .arabic { font-size: 1.45rem; line-height: 1.95; }
+  .ayet .okunus { font-size: 0.95rem; }
+  .ayet .meal { font-size: 1.05rem; }
+
+  /* İddianame */
+  .iddiana { padding: 2.2rem 1.4rem 1.8rem; }
+  .iddiana-step { gap: 1rem; }
+  .iddiana-num { width: 44px; height: 44px; font-size: 1.3rem; }
+  .iddiana-ayet .ia-ar { font-size: 1.2rem; line-height: 1.9; }
+
+  /* Galeri: tek sütuna düş, eğimleri sıfırla */
+  .gallery-grid { grid-template-columns: 1fr; gap: 1.6rem; }
+  .gallery-card:nth-child(odd),
+  .gallery-card:nth-child(even) { transform: none; }
+
+  /* Pull-quote */
+  .pull-quote { padding: 1.5rem 0.5rem; }
+  .pull-quote-text { font-size: 1.35rem; }
+
+  /* İçindekiler */
+  .toc { padding: 3rem 1.6rem 2.5rem; }
+  .toc li { font-size: 1.05rem; }
+  .toc li::before { min-width: 38px; margin-right: 1rem; }
+
+  /* Panteon / grup / putlar tek sütun-çift sütun dengesi */
+  .panteon-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .grup-calisma { gap: 1.2rem; }
+
+  /* Tablolar yatay kaydırılabilir */
+  .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 2rem 0; }
+  .table-scroll table { margin: 0; min-width: 460px; }
+
+  /* Harita */
+  #hicret-map { height: 380px; }
+
+  /* Drop cap'i biraz küçült */
+  p.illuminated::first-letter { font-size: 5.2em; }
+  p.dropcap::first-letter { font-size: 4.4em; }
+
+  /* Epigraf */
+  .epigraph-text.arabic { font-size: 1.25rem; }
+}
+
+/* ================================================
+   RESPONSIVE, TELEFON (≤480px)
+   ================================================ */
+@media (max-width: 480px) {
+  .lesson-book { padding: 0 1.1rem 3rem; }
+  body { font-size: 1.02rem; line-height: 1.7; }
+
+  /* Justify yerine sola yasla, dar ekranda boşluk sorununu çözer */
+  p { text-align: left; hyphens: auto; }
+
+  section { margin: 3.2rem 0 2rem; }
+
+  h2 { font-size: clamp(1.7rem, 9vw, 2.2rem); line-height: 1.15; }
+  h2 .h2-sub { font-size: 0.46em; }
+  h3 { font-size: 1.3rem; }
+  h4 { letter-spacing: 0.2em; }
+
+  /* Kapak */
+  .cover { min-height: 80vh; }
+  .cover h1 { font-size: clamp(2.2rem, 14vw, 3.2rem); }
+  .cover h1 em { font-size: 0.4em; }
+  .cover .arabic-flourish { font-size: 1.9rem; }
+  .cover .arabic-flourish::before,
+  .cover .arabic-flourish::after { display: none; }
+  .cover .subtitle { font-size: 1.08rem; }
+  .cover-ornament-svg { width: 140px; }
+
+  /* Ayet kutuları, köşe süslerini koru ama küçült */
+  .ayet { padding: 1.6rem 1.1rem 1.4rem; }
+  .ayet::before, .ayet::after { width: 16px; height: 16px; }
+  .ayet .arabic { font-size: 1.3rem; line-height: 1.9; }
+  .ayet .ayet-ref { font-size: 0.68rem; letter-spacing: 0.2em; }
+  .ayet .okunus { font-size: 0.9rem; }
+  .ayet .meal { font-size: 1rem; }
+
+  /* İddianame: numarayı üste al, dikey yığ */
+  .iddiana { padding: 1.8rem 1rem 1.5rem; }
+  .iddiana-header { font-size: 0.8rem; letter-spacing: 0.25em; }
+  .iddiana-step { grid-template-columns: 1fr; gap: 0.7rem; }
+  .iddiana-num { width: 40px; height: 40px; font-size: 1.2rem; }
+  .iddiana-content h5 { font-size: 1.25rem; }
+  .iddiana-ayet { padding: 0.8rem 0.9rem; }
+  .iddiana-ayet .ia-ar { font-size: 1.1rem; line-height: 1.85; }
+  .iddiana-verdict { font-size: 1.25rem; }
+
+  /* Galeri */
+  .gallery-card { padding: 0.7rem 0.7rem 1rem; }
+  .gallery-title { font-size: 1.15rem; }
+
+  /* Pull-quote */
+  .pull-quote-text { font-size: 1.2rem; }
+  .pull-quote::before { font-size: 3.5rem; }
+
+  /* Panteon tek sütun */
+  .panteon-grid { grid-template-columns: 1fr; }
+
+  /* İçindekiler */
+  .toc { padding: 2.6rem 1.2rem 2rem; }
+  .toc::before { font-size: 0.8rem; letter-spacing: 0.25em; }
+  .toc li { flex-wrap: wrap; }
+  .toc .toc-page { width: 100%; margin-top: 0.2rem; margin-left: 38px; }
+
+  /* Lead / epigraf */
+  p.lead { font-size: 1.18rem; padding-left: 1rem; }
+  .epigraph { padding: 1.2rem 0; }
+  .epigraph-text { font-size: 1.05rem; }
+  .epigraph-text.arabic { font-size: 1.15rem; }
+
+  /* Drop cap */
+  p.illuminated::first-letter { font-size: 4.4em; padding: 0.3rem 0.5rem 0 0.4rem; }
+  p.dropcap::first-letter { font-size: 3.8em; }
+
+  /* Harita */
+  #hicret-map { height: 320px; }
+
+  /* Dikkat / köprü */
+  .dikkat { padding: 1.2rem 1.3rem; }
+  .kopru { font-size: 1.15rem; }
+
+  /* Hadis */
+  .hadis { padding: 1.5rem 1.4rem 1.3rem; }
+}
+
+/* Çok küçük ekranlar için Arapça taşma güvenliği */
+@media (max-width: 360px) {
+  .ayet .arabic { font-size: 1.15rem; }
+  .iddiana-ayet .ia-ar { font-size: 1rem; }
+  .cover h1 { font-size: 2rem; }
+}
+
+/* ================================================
+   ANİMASYONLAR
+   ================================================ */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.cover > * {
+  animation: fadeInUp 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+.cover h1 { animation-delay: 0.2s; }
+.cover .arabic-flourish { animation-delay: 0.45s; }
+.cover .subtitle { animation-delay: 0.7s; }
+.cover .cover-ornament-svg { animation-delay: 0.95s; }
+
+/* Hareket azaltma tercihine saygı */
+@media (prefers-reduced-motion: reduce) {
+  .cover > * { animation: none; opacity: 1; }
+  * { scroll-behavior: auto !important; }
+}
+</style>
+</head>
+<body>
+<div class="lesson-book">
+
+<!-- ===================================================
+     KAPAK
+     =================================================== -->
+<header class="cover">
+  <h1>Hz. İbrahim <em>(a.s.)</em></h1>
+  <div class="arabic-flourish">إِبْرَاهِيمُ خَلِيلُ ٱللَّٰه</div>
+  <p class="subtitle">Tevhidin Atası, Halîlullah ve Hakikat Arayışı, <br>Mezopotamya'dan Mekke'ye İki Paralel Yolculuk</p>
+
+  <!-- Tezhip ornament, Selçuklu/Osmanlı esinli simetrik rozet -->
+  <svg class="cover-ornament-svg" width="180" height="60" viewBox="0 0 180 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <g stroke="#9c7427" fill="none" stroke-width="0.8" stroke-linecap="round">
+      <!-- Sol kanat süslemesi -->
+      <path d="M5,30 L70,30" />
+      <path d="M70,30 Q72,22 78,22 Q84,22 86,30 Q84,38 78,38 Q72,38 70,30 Z" fill="#9c7427" fill-opacity="0.15"/>
+      <circle cx="78" cy="30" r="1.5" fill="#6b1a1f"/>
+      <!-- Merkezi rozet -->
+      <g transform="translate(90,30)">
+        <circle r="14" stroke-width="0.6" fill="#f5ecd4" fill-opacity="0.5"/>
+        <circle r="10" stroke-width="0.5"/>
+        <circle r="6" stroke-width="0.5"/>
+        <!-- 8 köşeli yıldız -->
+        <g stroke="#6b1a1f" stroke-width="0.5">
+          <line x1="-10" y1="0" x2="10" y2="0"/>
+          <line x1="0" y1="-10" x2="0" y2="10"/>
+          <line x1="-7" y1="-7" x2="7" y2="7"/>
+          <line x1="-7" y1="7" x2="7" y2="-7"/>
+        </g>
+        <circle r="2" fill="#6b1a1f"/>
+      </g>
+      <!-- Sağ kanat süslemesi (sol kanadın aynası) -->
+      <path d="M175,30 L110,30" />
+      <path d="M110,30 Q108,22 102,22 Q96,22 94,30 Q96,38 102,38 Q108,38 110,30 Z" fill="#9c7427" fill-opacity="0.15"/>
+      <circle cx="102" cy="30" r="1.5" fill="#6b1a1f"/>
+    </g>
+  </svg>
+</header>
+
+<!-- ===================================================
+     İÇİNDEKİLER
+     =================================================== -->
+<nav class="toc">
+  <ol>
+    <li><a href="#amac">Giriş</a><span class="toc-page">i</span></li>
+    <li><a href="#bolum-1">Etimoloji ve Anlam Çerçevesi</a><span class="toc-page">I</span></li>
+    <li><a href="#bolum-2">Tarihsel ve Coğrafi Arka Plan</a><span class="toc-page">II</span></li>
+    <li><a href="#bolum-3">Hz. İbrahim'in Hayatı, Biyografi</a><span class="toc-page">III</span></li>
+    <li><a href="#bolum-4">Kâbe ve Hac</a><span class="toc-page">IV</span></li>
+    <li><a href="#bolum-5">Üç İbrahimî Dinde Hz. İbrahim</a><span class="toc-page">V</span></li>
+    <li><a href="#bolum-6">Sonuç ve Bugünün İnsanına Mesajlar</a><span class="toc-page">VI</span></li>
+    <li><a href="#harita">EK A: Hicret Haritası</a><span class="toc-page">harita</span></li>
+    <li><a href="#hadisler">EK B: Hadis Metinleri (Türkçe)</a><span class="toc-page">tam metin</span></li>
+    <li><a href="#kaynakca">Kaynakça ve İleri Okumalar</a><span class="toc-page">son</span></li>
+  </ol>
+</nav>
+
+<!-- ===================================================
+     GİRİŞ
+     =================================================== -->
+<section id="amac">
+  <div class="section-num">Giriş</div>
+  <h2>Bir Hayatın Hatırası</h2>
+
+  <div class="epigraph">
+    <p class="epigraph-text arabic">إِنَّ إِبْرَاهِيمَ كَانَ أُمَّةً قَانِتًا لِّلَّهِ حَنِيفًا</p>
+    <p class="epigraph-text">"Şüphesiz İbrahim, başlı başına bir ümmet, Allah'a itaatkâr, hanîf bir kuldu."</p>
+    <p class="epigraph-cite">Nahl 16/120</p>
+  </div>
+
+  <p class="lead">Hz. İbrahim (a.s.), yalnızca geçmişte yaşamış büyük bir peygamber değil; tevhid, akıl, cesaret, hicret, aile, teslimiyet, dua ve ibadet mirasının kesişim noktasında duran <em>canlı bir örnek</em>tir.</p>
+
+  <p class="illuminated">Onun hayatı, hem dışta hem içte yaşanan bir yolculuktur. Dışta, ayaklarının attığı uzun bir hicret vardır: Ur'dan Harran'a, Harran'dan Kenan'a, oradan Mısır'a ve sonunda Mekke vadisine. İçte ise daha derin bir seyir: kavminin putları arasında doğan bir gencin sorgulamayla başlayan, tevhide ulaşan ve nihayet mutlak teslimiyetle taçlanan ruhu. O her şehir değiştirdiğinde, içinde de bir şey olgunlaşıyordu.</p>
+
+  <div class="iki-yolculuk">
+    <div class="yolculuk-row">
+      <span class="yolculuk-label">Hicret Yolu</span>
+      <span class="yolculuk-step">Ur</span><span class="yolculuk-arrow">→</span>
+      <span class="yolculuk-step">Harran</span><span class="yolculuk-arrow">→</span>
+      <span class="yolculuk-step">Kenan</span><span class="yolculuk-arrow">→</span>
+      <span class="yolculuk-step">Mısır</span><span class="yolculuk-arrow">→</span>
+      <span class="yolculuk-step">Mekke</span>
+    </div>
+  </div>
+
+  <p>Bu metin, onun hayatını altı bölümde takip eder. Önce ismini ve kimliğini; sonra doğduğu dünyayı; ardından hakikati arayışını, mücadelesini, ailesini ve büyük imtihanlarını; daha sonra Kâbe ile Hac ibadetindeki yerini; üçüncü olarak üç İbrahimî dinin onu nasıl hatırladığını; ve nihayet bugüne, kendi hayatımıza uzanan mesajlarını ele alır.</p>
+
+  <p>Her bölümde Kur'an ayetleri Arapça asıllarıyla ve mealleriyle birlikte verilmiştir; klasik kaynaklar ve sahih hadislerden tanıklıklar sunulmuştur. Sonda iki ek bulunur: hicret yolculuğunun haritası (EK A) ve metin içinde atıfta bulunulan hadislerin tam Türkçe çevirileri (EK B).</p>
+</section>
+
+<!-- ===================================================
+     BÖLÜM 1, GİRİŞ VE ETİMOLOJİ
+     =================================================== -->
+<section id="bolum-1">
+  <div class="section-num">Bölüm I</div>
+  <h2>Giriş ve Etimoloji <span class="h2-sub">Dost · Hanîf · Teslimiyet</span></h2>
+
+  <div class="epigraph">
+    <p class="epigraph-text arabic">وَاتَّخَذَ ٱللَّهُ إِبْرَٰهِيمَ خَلِيلًا</p>
+    <p class="epigraph-text">"Ve Allah, İbrahim'i dost edinmiştir."</p>
+    <p class="epigraph-cite">Nisâ 4/125</p>
+  </div>
+
+  <p class="lead">Bu, bütün bir toplumun inandığı şeyleri sorgulama cesaretini gösteren bir gencin hikâyesidir. O genç göğe baktı, putlara baktı, iktidara baktı, ailesine baktı ve sonunda yalnızca Allah'a yöneldi.</p>
+
+  <p class="dropcap">Onun hayatı üç kelimede özetlenebilir: <strong>dost, hanîf, teslimiyet.</strong> Bir insan hangi davranışıyla Allah'ın "dostu" olur? İşte bu hikâye, tam da bu sorunun cevabıdır. Hz. İbrahim'in (a.s.) hayatı boyunca bu üç kavramın nasıl tek bir insanda toplandığını adım adım göreceğiz.</p>
+
+  <h4>Etimoloji</h4>
+  <p>"İbrahim" / Avraham (אַבְרָהָם) / Abraham ismi, Sami dil ailesi içinde değerlendirilir. Tevrat'taki Yaratılış 17'de anlatıldığına göre Allah, <strong>Avram</strong> ("yüce baba", <em>av</em> baba + <em>ram</em> yüce) ismini <strong>Avraham</strong>'a ("çoklukların / milletlerin babası") dönüştürmüştür. Akadca'da da <em>Abi-ramu</em> benzeri biçimler bulunur; yani isim, dönemin ad verme geleneğine tam olarak oturmaktadır.</p>
+
+  <h4>Lakaplar</h4>
+  <p><strong>Halîlullah</strong> ("Allah'ın dostu"): Kur'an'da açıkça geçer. Nisâ 125'te buyrulur: <em>"Allah, İbrahim'i halîl/dost edinmiştir."</em></p>
+  <p><strong>Hanîf:</strong> Batıl inançlardan yüz çevirip saf tevhid çizgisine yönelen kimse. Kur'an'da Hz. İbrahim için defalarca kullanılır.</p>
+  <p><strong>Ebu'l-Enbiyâ</strong> ("Peygamberler babası"): Bu unvan Kur'an'da bu lafızla doğrudan geçmez. Ancak Hz. İsmail ve Hz. İshak'ın (a.s.) soyundan pek çok peygamber geldiği için İslam geleneğinde Hz. İbrahim'e bu sıfat verilmiştir.</p>
+
+  <h4>Salli-Barik Dualarının Metni</h4>
+  <div class="ayet">
+    <div class="ayet-ref">Salât-ı İbrâhîmiyye</div>
+    <p class="arabic">اَللّٰهُمَّ صَلِّ عَلٰى مُحَمَّدٍ وَعَلٰى اٰلِ مُحَمَّدٍ كَمَا صَلَّيْتَ عَلٰى اِبْرَاهِيمَ وَعَلٰى اٰلِ اِبْرَاهِيمَ اِنَّكَ حَمِيدٌ مَجِيدٌ</p>
+    <p class="arabic">اَللّٰهُمَّ بَارِكْ عَلٰى مُحَمَّدٍ وَعَلٰى اٰلِ مُحَمَّدٍ كَمَا بَارَكْتَ عَلٰى اِبْرَاهِيمَ وَعَلٰى اٰلِ اِبْرَاهِيمَ اِنَّكَ حَمِيدٌ مَجِيدٌ</p>
+    <p class="okunus">Allâhümme salli alâ Muhammedin ve alâ âli Muhammed, kemâ salleyte alâ İbrâhîme ve alâ âli İbrâhîm, inneke hamîdün mecîd. Allâhümme bârik alâ Muhammedin ve alâ âli Muhammed, kemâ bârekte alâ İbrâhîme ve alâ âli İbrâhîm, inneke hamîdün mecîd.</p>
+    <div class="meal">"Allah'ım! İbrahim'e ve âilesine rahmet ettiğin gibi Muhammed'e ve âilesine de rahmet et. İbrahim'e ve âilesine bereket verdiğin gibi Muhammed'e ve âilesine de bereket ver. Şüphesiz Sen övgüye layık ve şanı yücesin."</div>
+  </div>
+
+  <p><strong>Hadis kaynağı (önemli):</strong> Bu duayı bizzat Hz. Peygamber (s.a.v.) ümmetine öğretmiştir. <strong>Sahih Buhârî, Kitâbü'd-Daavât, No: 6357</strong>: Ka'b b. Ucre (r.a.) rivayetinde sahabe <em>"Sana nasıl salât getireceğimizi öğrendik, ama size nasıl salât getirelim ya Rasûlallah?"</em> diye sormuş, Peygamber Efendimiz bu duayı öğretmiştir. Yani dua keyfî değil <strong>nebevî</strong>dir. (Hadisin tam Türkçe metni için EK B'ye bakınız.)</p>
+
+  <h3>Kur'an Ayeti</h3>
+  <div class="ayet">
+    <div class="ayet-ref">Nisâ Suresi 4/125</div>
+    <p class="arabic">وَمَنْ أَحْسَنُ دِينًا مِمَّنْ أَسْلَمَ وَجْهَهُ لِلَّهِ وَهُوَ مُحْسِنٌ وَاتَّبَعَ مِلَّةَ إِبْرَاهِيمَ حَنِيفًا ۗ وَاتَّخَذَ اللَّهُ إِبْرَاهِيمَ خَلِيلًا</p>
+    <p class="okunus">Ve men ahsenü dînen mimmen esleme vechehû lillâhi ve hüve muhsinün vettebea millete İbrâhîme hanîfâ, vettehazallâhü İbrâhîme halîlâ.</p>
+    <div class="meal">"İyilik yaparak yüzünü Allah'a teslim eden ve hanîf olarak İbrahim'in yoluna uyan kimseden, din bakımından daha güzel kim olabilir? Allah, İbrahim'i dost edinmiştir."</div>
+  </div>
+
+  <h3>Tarihsel Destek</h3>
+  <p>Britannica gibi akademik kaynaklar, Hz. İbrahim'i Yahudilik, Hristiyanlık ve İslam'da saygı gören ilk büyük ortak şahsiyet olarak tanımlar, ancak modern anlamda "tam bir biyografi" kurmanın güç olduğunu, Kur'an, hadis, Kitâb-ı Mukaddes ve arkeolojik bağlamı <em>birlikte</em> okuyan ihtiyatlı bir yaklaşımın gerekli olduğunu belirtir. Tarih, onun hakkındaki kesin tarihleri hâlâ tartışmaktadır; fakat üç büyük dinin hafızasında onun varlığı tartışılmaz. <em>Dost, hanîf, teslimiyet</em>, işte hayatının özeti bu üç kelimeye sığar; ve hikâyesi boyunca bu üç kavramın nasıl bir insanda toplandığını göreceğiz.</p>
+
+  <div class="kopru">Şimdi bu büyük adamın hangi dünyada doğduğuna bakalım: putların, yıldız tanrılarının ve şehir krallarının dünyası…</div>
+</section>
+
+<!-- ===================================================
+     BÖLÜM 2, TARİHSEL VE COĞRAFİ ARKA PLAN
+     =================================================== -->
+<section id="bolum-2">
+  <div class="section-num">Bölüm II</div>
+  <h2>Tarihsel ve Coğrafi Arka Plan <span class="h2-sub">Ur, Zigguratlar ve Gök Tanrıları</span></h2>
+
+  <div class="epigraph">
+    <p class="epigraph-text arabic">وَلَقَدْ ءَاتَيْنَآ إِبْرَٰهِيمَ رُشْدَهُۥ مِن قَبْلُ وَكُنَّا بِهِۦ عَٰلِمِينَ</p>
+    <p class="epigraph-text">"Andolsun ki biz, daha önce İbrahim'e olgunluğunu vermiştik; biz onu iyi tanıyorduk."</p>
+    <p class="epigraph-cite">Enbiyâ 21/51</p>
+  </div>
+
+  <p class="lead">Hz. İbrahim'in tevhid mücadelesini anlamak için, mücadelenin verildiği dünyayı somutlaştırmak gerekir. O dünya hem çok gelişmişti hem de manen çökmüştü.</p>
+
+  <h3>Tarihsel Pencere</h3>
+  <p>Hz. İbrahim, geleneksel kronolojide yaklaşık <strong>MÖ 2000-1800</strong> arasında yaşamıştır. Bu, dünya tarihinin son derece zengin bir dönemidir:</p>
+
+  <ul style="margin: 1rem 0 1.5rem 1.5rem; line-height: 1.8;">
+    <li><strong>Mezopotamya'da:</strong> Ur III hanedanı (yaklaşık MÖ 2112-2004) çöküşte, Eski Babil dönemi başlangıçta. <strong>Hammurabi (MÖ 1792-1750)</strong> henüz iktidara gelmemiş ya da gençtir.</li>
+    <li><strong>Mısır'da:</strong> Orta Krallık dönemi (yaklaşık MÖ 2030-1650).</li>
+    <li><strong>Anadolu'da:</strong> Asur Ticaret Kolonileri Çağı (Karum dönemi, MÖ 1950-1750); Hitit Eski Krallığı henüz kurulmamış (MÖ 1650-1500).</li>
+    <li><strong>Kenan'da:</strong> Şehir devletleri, Amorit göçleri, ticaret yolları kavşağı.</li>
+  </ul>
+
+  <h3>Ur Şehri ve Şanlıurfa Geleneği</h3>
+  <p>Hz. İbrahim'in doğduğu yer olarak Tevrat'ta <strong>"Ur Kasdim"</strong> (Kildânîlerin Ur'u) geçer. Çoğu araştırmacı bunu bugünkü Irak'ta Tell el-Muqayyar civarındaki Sümer kenti Ur ile özdeşleştirir.</p>
+
+  <div class="dikkat">
+    <span class="dikkat-label">Türkiye'den Bir Parantez</span>
+    <p>Türkiye'de Şanlı<strong>urfa</strong> ve Harran yöresinde Hz. İbrahim'in doğum yeri olduğuna dair güçlü bir gelenek vardır, özellikle "Balıklı Göl" kıssasıyla (Nemrut'un ateşi gül bahçesine, ateşin közleri balıklara dönüştü). Akademik dünyada Ur'un Mezopotamya'daki Sümer şehri mi yoksa kuzeydeki Urfa bölgesi mi olduğu tartışmalıdır; her iki ihtimal de zikredilmeye değerdir. Özellikle bu toprakların insanı için, bu yerel-tarihsel kimlik kıymetli bir bağ kurar.</p>
+  </div>
+
+  <h3>Ur Ziggurat'ı: Devlet Destekli Bir Din</h3>
+  <p>Ur Ziggurat'ı, yaklaşık <strong>MÖ 2100</strong>'de <strong>Ur-Nammu</strong> tarafından, şehrin ay tanrısı <strong>Nanna / Sin</strong> için inşa edilmiştir. Bu ayrıntı çok önemlidir: Hz. İbrahim'in tevhid mücadelesi basit köy putçuluğuna değil, <strong>örgütlü, devasa, devlet destekli şehir dinlerine</strong> karşıydı. Bir Ziggurat yıkmak, bugün bir hükümet binasını protesto etmeye benzer.</p>
+
+  <h3>Dönemin Gök Tanrıları</h3>
+  <p>Sümer-Akkad inanç dünyası yüzlerce tanrılı, gökyüzü merkezli bir <strong>düzen</strong> üzerine kuruluydu. Üç büyük gök tanrısı, Hz. İbrahim'in muhakemesinin doğrudan muhatabı olacaktır:</p>
+
+  <div class="panteon">
+    <div class="panteon-grid">
+      <div class="panteon-card">
+        <span class="panteon-symbol">🌙</span>
+        <div class="panteon-name">Sîn (Nanna)</div>
+        <div class="panteon-meaning">Ay Tanrısı</div>
+        <p class="panteon-desc">Ur'un baş tanrısı. Ur Ziggurat'ı doğrudan ona adanmıştı. Geceleri görünen, ayın evreleriyle takvimi yöneten, çobanların ve bilgeliğin tanrısı sayılırdı. Hz. İbrahim'in kavminin gözünde <strong>en büyük göksel ilah</strong>tı.</p>
+      </div>
+      <div class="panteon-card">
+        <span class="panteon-symbol">☀</span>
+        <div class="panteon-name">Şamaş (Utu)</div>
+        <div class="panteon-meaning">Güneş Tanrısı</div>
+        <p class="panteon-desc">Adaletin ve hükmün tanrısı. Hammurabi kanun stelinde kanunları Hammurabi'ye <em>Şamaş'ın</em> verdiği tasvir edilir. Sîn'in oğlu kabul edilirdi. Gökten her şeyi görür, hiçbir şey ondan saklanamazdı.</p>
+      </div>
+      <div class="panteon-card">
+        <span class="panteon-symbol">✦</span>
+        <div class="panteon-name">İştar (İnanna)</div>
+        <div class="panteon-meaning">Venüs / Yıldız</div>
+        <p class="panteon-desc">Sabah ve akşam yıldızı (Venüs gezegeni). Aşkın, savaşın, doğurganlığın tanrıçası. Sîn'in kızı sayılırdı. Mezopotamya'nın en yaygın tapınılan tanrılarından biriydi.</p>
+      </div>
+    </div>
+    <p style="font-size: 0.95rem; color: var(--ink-muted); font-style: italic; text-align: center; margin-top: 1rem;">Hz. İbrahim'in <em>"Ben batanları sevmem"</em> sözü, soyut bir felsefe değil; <strong>bu üç tanrıya yönelik adıyla bilinmesi gereken bir teolojik müdahaledir.</strong></p>
+  </div>
+
+  <h3>Çivi Yazısı ve Standard of Ur</h3>
+  <p><strong>Çivi yazısı:</strong> MÖ 4. binyıl sonlarında Güney Mezopotamya'da (Uruk çevresinde) ortaya çıkan ve antik Yakın Doğu'nun ana yazı sistemi haline gelen bir teknoloji. Hz. İbrahim'in dünyası <strong>yazılı, hukuklu, vergi sistemli, tapınak ekonomisi olan</strong> ileri bir uygarlıktı.</p>
+
+  <p><strong>"Standard of Ur":</strong> British Museum'da sergilenen, yaklaşık <strong>MÖ 2550-2400</strong>'e tarihlenen ünlü mozaik. Ur kraliyet mezarlığında bulunmuştur; bir yüzünde savaş, diğerinde tören-saray hayatı tasvir edilir.</p>
+
+  <h3>Nemrut Kimdir?</h3>
+  <p>Bakara 258'de Hz. İbrahim ile tartışan kralın <strong>adı Kur'an'da geçmez</strong>. İslam geleneği bu kralı <strong>Nemrut (Namrûd)</strong> olarak adlandırır; Tevrat'ta (Yaratılış 10:8-12) Nemrut, Hz. Nuh'un soyundan (oğlu Ham'ın torunu) gelen, "Babil, Erek, Akkad ve Kalne şehirlerinin kralı" olarak geçer.</p>
+
+  <p>İbn Kesîr tefsiri, Bakara 258'de geçen bu kralı Nemrut diye adlandırır. Ancak modern tarihçiler kesin bir kimlik tespitinden kaçınır; kimi Naram-Sin'i, kimi erken Babil krallarından birini önerir. Önemli olan, Kur'an'ın isimden çok mesajı öne çıkarmasıdır: Nemrut, tanrılık iddiasındaki zorba kralın değişmez örnek tipidir.</p>
+
+  <p>Bu kralın Hz. İbrahim'le giriştiği o meşhur tartışmayı ve Kur'an'ın aktardığı çarpıcı diyaloğu, ileride <a href="#bolum-3">Hz. İbrahim'in hayatını ele alan bölümde</a> (e. Nemrut ile Diyalog) ayetin tam metniyle birlikte inceleyeceğiz.</p>
+
+  <h3>Arkeolojik Destek</h3>
+  <ul style="margin: 1rem 0 1rem 1.5rem; line-height: 1.8;">
+    <li><strong>Sir Leonard Woolley</strong> liderliğinde <strong>British Museum + Penn Museum</strong> ortaklığında 1922-1934 yılları arasında yürütülen <strong>Ur kazıları</strong>, kraliyet mezarlarını, Ur Standardı'nı ve evlerdeki put nişlerini ortaya çıkarmıştır.</li>
+    <li>Bulunan binlerce <strong>çivi yazılı tablet</strong>, dönemin hukukunu, ekonomisini, dinî pratiklerini belgeler.</li>
+    <li><strong>Hammurabi Kanunları</strong> (yaklaşık MÖ 1754), Hz. İbrahim'den biraz sonraki dönemin hukukî zihniyetini gösterir.</li>
+  </ul>
+
+  <div class="gallery">
+    <p class="gallery-intro">Hz. İbrahim'in dünyasından izler, bugün hâlâ ayakta duran tanıklar</p>
+    <div class="gallery-grid">
+
+      <figure class="gallery-card">
+        <svg class="gallery-svg" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="zigSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e8c98a"/><stop offset="45%" stop-color="#dcb878"/><stop offset="100%" stop-color="#c89a5a"/></linearGradient><linearGradient id="zigSun" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f4e0b0" stop-opacity="0.9"/><stop offset="100%" stop-color="#f4e0b0" stop-opacity="0"/></linearGradient><linearGradient id="zigLight" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#d9b878"/><stop offset="100%" stop-color="#b88f4e"/></linearGradient><linearGradient id="zigShade" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#9c6f3a"/><stop offset="100%" stop-color="#7a5328"/></linearGradient></defs><rect width="400" height="300" fill="url(#zigSky)"/><circle cx="310" cy="80" r="120" fill="url(#zigSun)"/><circle cx="310" cy="78" r="34" fill="#f6e8c0" opacity="0.85"/><path d="M0 210 Q100 188 200 200 T400 195 L400 300 L0 300 Z" fill="#c49355" opacity="0.5"/><rect y="232" width="400" height="68" fill="#bd9050"/><rect y="232" width="400" height="68" fill="#a87c3e" opacity="0.35"/><g><polygon points="70,232 330,232 300,196 100,196" fill="url(#zigLight)"/><polygon points="330,232 300,196 300,232" fill="url(#zigShade)"/><polygon points="108,196 292,196 268,166 132,166" fill="url(#zigLight)"/><polygon points="292,196 268,166 268,196" fill="url(#zigShade)"/><polygon points="140,166 260,166 240,138 160,138" fill="url(#zigLight)"/><polygon points="260,166 240,138 240,166" fill="url(#zigShade)"/><polygon points="168,138 232,138 222,116 178,116" fill="url(#zigLight)"/><polygon points="232,138 222,116 222,138" fill="url(#zigShade)"/><rect x="190" y="100" width="20" height="16" fill="#8a6230"/></g><polygon points="186,232 214,232 210,116 190,116" fill="#8a6432" opacity="0.55"/><g stroke="#6f4e26" stroke-width="1" opacity="0.5"><line x1="188" y1="220" x2="212" y2="220"/><line x1="189" y1="205" x2="211" y2="205"/><line x1="190" y1="190" x2="210" y2="190"/><line x1="191" y1="172" x2="209" y2="172"/><line x1="192" y1="155" x2="208" y2="155"/><line x1="193" y1="140" x2="207" y2="140"/></g><g stroke="#7a5328" stroke-width="0.8" opacity="0.3"><line x1="100" y1="196" x2="70" y2="232"/><line x1="132" y1="166" x2="108" y2="196"/><line x1="160" y1="138" x2="140" y2="166"/></g><g stroke="#6f4e26" stroke-width="1.4" fill="none" opacity="0.5"><path d="M60 70 q5 -5 10 0 q5 -5 10 0"/><path d="M88 86 q4 -4 8 0 q4 -4 8 0"/></g></svg>
+        <figcaption class="gallery-caption">
+          <div class="gallery-meta">MÖ ~2100 · Bugünkü Irak</div>
+          <div class="gallery-title">Ur Ziggurat'ı</div>
+          <p class="gallery-desc">Ay tanrısı Sîn için yükseltilen basamaklı tapınak. Hz. İbrahim'in karşı çıktığı dinin somut simgesi.</p>
+        </figcaption>
+      </figure>
+
+      <figure class="gallery-card">
+        <svg class="gallery-svg" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="urBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2c4258"/><stop offset="100%" stop-color="#1a2c3e"/></linearGradient></defs><rect width="400" height="300" fill="url(#urBg)"/><rect x="28" y="40" width="344" height="220" fill="#23384c" stroke="#caa84e" stroke-width="3"/><line x1="28" y1="113" x2="372" y2="113" stroke="#caa84e" stroke-width="2"/><line x1="28" y1="186" x2="372" y2="186" stroke="#caa84e" stroke-width="2"/><g><g fill="#e8ddc4"><ellipse cx="70" cy="78" rx="11" ry="20"/><circle cx="70" cy="55" r="8"/><ellipse cx="130" cy="82" rx="8" ry="15"/><circle cx="130" cy="62" r="6"/><ellipse cx="165" cy="82" rx="8" ry="15"/><circle cx="165" cy="62" r="6"/><ellipse cx="200" cy="82" rx="8" ry="15"/><circle cx="200" cy="62" r="6"/><ellipse cx="235" cy="82" rx="8" ry="15"/><circle cx="235" cy="62" r="6"/><ellipse cx="300" cy="82" rx="7" ry="14"/><circle cx="300" cy="63" r="5"/><ellipse cx="330" cy="82" rx="7" ry="14"/><circle cx="330" cy="63" r="5"/></g><rect x="95" y="92" width="18" height="3" fill="#caa84e"/></g><g fill="#d8c9a8"><path d="M55 155 q12 -8 24 0 l0 12 l-24 0 Z"/><path d="M90 155 q12 -8 24 0 l0 12 l-24 0 Z"/><path d="M150 158 l20 0 l0 8 l-20 0 Z"/><path d="M180 158 l20 0 l0 8 l-20 0 Z"/><circle cx="240" cy="150" r="7"/><rect x="236" y="155" width="8" height="14"/><circle cx="275" cy="150" r="7"/><rect x="271" y="155" width="8" height="14"/><circle cx="310" cy="150" r="7"/><rect x="306" y="155" width="8" height="14"/></g><g fill="#e8ddc4"><circle cx="70" cy="235" r="13" fill="none" stroke="#e8ddc4" stroke-width="3"/><circle cx="70" cy="235" r="4"/><circle cx="140" cy="235" r="13" fill="none" stroke="#e8ddc4" stroke-width="3"/><circle cx="140" cy="235" r="4"/><circle cx="215" cy="235" r="13" fill="none" stroke="#e8ddc4" stroke-width="3"/><circle cx="215" cy="235" r="4"/><circle cx="290" cy="235" r="13" fill="none" stroke="#e8ddc4" stroke-width="3"/><circle cx="290" cy="235" r="4"/><path d="M58 222 l40 0 l-6 -14 l-28 0 Z"/><path d="M128 222 l40 0 l-6 -14 l-28 0 Z"/><path d="M203 222 l40 0 l-6 -14 l-28 0 Z"/></g><g fill="#b5563c"><circle cx="358" cy="78" r="3"/><circle cx="358" cy="150" r="3"/><circle cx="358" cy="222" r="3"/><circle cx="42" cy="78" r="3"/><circle cx="42" cy="150" r="3"/></g></svg>
+        <figcaption class="gallery-caption">
+          <div class="gallery-meta">MÖ ~2550 · British Museum</div>
+          <div class="gallery-title">Ur Sancağı</div>
+          <p class="gallery-desc">Ur kraliyet mezarlığında bulunan ünlü mozaik. Hz. İbrahim'in doğduğu şehrin ihtişamını gösterir.</p>
+        </figcaption>
+      </figure>
+
+      <figure class="gallery-card">
+        <svg class="gallery-svg" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="hamBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3a3530"/><stop offset="100%" stop-color="#252019"/></linearGradient><linearGradient id="hamStone" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#5a4a3a"/><stop offset="50%" stop-color="#4a3c2e"/><stop offset="100%" stop-color="#382c20"/></linearGradient><radialGradient id="hamGlow" cx="0.5" cy="0.25" r="0.5"><stop offset="0%" stop-color="#6a5640" stop-opacity="0.7"/><stop offset="100%" stop-color="#6a5640" stop-opacity="0"/></radialGradient></defs><rect width="400" height="300" fill="url(#hamBg)"/><ellipse cx="200" cy="90" rx="140" ry="110" fill="url(#hamGlow)"/><path d="M150 290 L150 90 Q150 40 200 36 Q250 40 250 90 L250 290 Z" fill="url(#hamStone)" stroke="#2a2018" stroke-width="2"/><rect x="160" y="60" width="80" height="70" fill="#3c2f22" opacity="0.6"/><g fill="#6a5640"><rect x="206" y="78" width="22" height="32" rx="3"/><circle cx="217" cy="70" r="9"/><path d="M209 64 q8 -8 16 0" fill="none" stroke="#6a5640" stroke-width="2"/><line x1="228" y1="76" x2="236" y2="70" stroke="#7a6248" stroke-width="1.5"/><line x1="228" y1="82" x2="237" y2="80" stroke="#7a6248" stroke-width="1.5"/></g><g fill="#5e4c3a"><rect x="174" y="74" width="16" height="40" rx="2"/><circle cx="182" cy="68" r="7"/><path d="M190 84 l12 -6" stroke="#5e4c3a" stroke-width="3" fill="none"/></g><g stroke="#5a4836" stroke-width="1" opacity="0.55"><line x1="160" y1="145" x2="240" y2="145"/><line x1="160" y1="156" x2="240" y2="156"/><line x1="160" y1="167" x2="240" y2="167"/><line x1="160" y1="178" x2="240" y2="178"/><line x1="160" y1="189" x2="240" y2="189"/><line x1="160" y1="200" x2="240" y2="200"/><line x1="160" y1="211" x2="240" y2="211"/><line x1="160" y1="222" x2="240" y2="222"/><line x1="160" y1="233" x2="240" y2="233"/><line x1="160" y1="244" x2="240" y2="244"/><line x1="160" y1="255" x2="240" y2="255"/><line x1="160" y1="266" x2="240" y2="266"/></g><g stroke="#473829" stroke-width="0.6" opacity="0.4"><line x1="175" y1="142" x2="175" y2="270"/><line x1="195" y1="142" x2="195" y2="270"/><line x1="215" y1="142" x2="215" y2="270"/></g><path d="M150 290 L150 90 Q150 40 200 36 L200 290 Z" fill="#000" opacity="0.12"/></svg>
+        <figcaption class="gallery-caption">
+          <div class="gallery-meta">MÖ ~1754 · Louvre</div>
+          <div class="gallery-title">Hammurabi Steli</div>
+          <p class="gallery-desc">Hammurabi, güneş tanrısı Şamaş'ın huzurunda kanunları alırken. Hz. İbrahim'in dönemine yakın bir tarih.</p>
+        </figcaption>
+      </figure>
+
+      <figure class="gallery-card">
+        <svg class="gallery-svg" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="tabBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4a3c2c"/><stop offset="100%" stop-color="#332818"/></linearGradient><linearGradient id="clay" x1="0" y1="0" x2="0.6" y2="1"><stop offset="0%" stop-color="#cda876"/><stop offset="55%" stop-color="#b88f5a"/><stop offset="100%" stop-color="#9a7344"/></linearGradient><radialGradient id="tabLight" cx="0.4" cy="0.3" r="0.7"><stop offset="0%" stop-color="#5a4a36" stop-opacity="0.6"/><stop offset="100%" stop-color="#5a4a36" stop-opacity="0"/></radialGradient></defs><rect width="400" height="300" fill="url(#tabBg)"/><ellipse cx="200" cy="150" rx="180" ry="130" fill="url(#tabLight)"/><path d="M95 60 Q200 50 305 60 Q318 150 305 240 Q200 250 95 240 Q82 150 95 60 Z" fill="url(#clay)" stroke="#7a5a34" stroke-width="2"/><path d="M95 240 Q200 250 305 240 Q310 246 305 250 Q200 260 95 250 Q90 246 95 240 Z" fill="#000" opacity="0.15"/><g stroke="#7a5a34" stroke-width="1" opacity="0.4"><line x1="155" y1="72" x2="155" y2="228"/><line x1="205" y1="68" x2="205" y2="232"/><line x1="255" y1="72" x2="255" y2="228"/></g><g fill="#5e4424"><g><path d="M112 80 l6 2 l-6 2 Z"/><path d="M122 80 l6 2 l-6 2 Z"/><path d="M118 86 l2 5 l-4 -2 Z"/><path d="M165 80 l6 2 l-6 2 Z"/><path d="M175 82 l2 5 l-4 -2 Z"/><path d="M182 80 l6 2 l-6 2 Z"/><path d="M215 80 l6 2 l-6 2 Z"/><path d="M225 80 l6 2 l-6 2 Z"/><path d="M270 80 l6 2 l-6 2 Z"/></g><g transform="translate(0,22)"><path d="M110 80 l6 2 l-6 2 Z"/><path d="M120 82 l2 5 l-4 -2 Z"/><path d="M128 80 l6 2 l-6 2 Z"/><path d="M168 80 l6 2 l-6 2 Z"/><path d="M178 80 l6 2 l-6 2 Z"/><path d="M186 82 l2 5 l-4 -2 Z"/><path d="M218 80 l6 2 l-6 2 Z"/><path d="M268 80 l6 2 l-6 2 Z"/><path d="M278 82 l2 5 l-4 -2 Z"/></g><g transform="translate(0,44)"><path d="M114 80 l6 2 l-6 2 Z"/><path d="M124 82 l2 5 l-4 -2 Z"/><path d="M165 80 l6 2 l-6 2 Z"/><path d="M175 80 l6 2 l-6 2 Z"/><path d="M216 82 l2 5 l-4 -2 Z"/><path d="M224 80 l6 2 l-6 2 Z"/><path d="M270 80 l6 2 l-6 2 Z"/></g><g transform="translate(0,66)"><path d="M110 80 l6 2 l-6 2 Z"/><path d="M120 80 l6 2 l-6 2 Z"/><path d="M130 82 l2 5 l-4 -2 Z"/><path d="M168 82 l2 5 l-4 -2 Z"/><path d="M176 80 l6 2 l-6 2 Z"/><path d="M218 80 l6 2 l-6 2 Z"/><path d="M268 80 l6 2 l-6 2 Z"/><path d="M278 80 l6 2 l-6 2 Z"/></g><g transform="translate(0,88)"><path d="M112 80 l6 2 l-6 2 Z"/><path d="M122 82 l2 5 l-4 -2 Z"/><path d="M130 80 l6 2 l-6 2 Z"/><path d="M165 80 l6 2 l-6 2 Z"/><path d="M175 80 l6 2 l-6 2 Z"/><path d="M185 80 l6 2 l-6 2 Z"/><path d="M216 80 l6 2 l-6 2 Z"/><path d="M270 82 l2 5 l-4 -2 Z"/></g><g transform="translate(0,110)"><path d="M110 80 l6 2 l-6 2 Z"/><path d="M120 80 l6 2 l-6 2 Z"/><path d="M168 80 l6 2 l-6 2 Z"/><path d="M178 82 l2 5 l-4 -2 Z"/><path d="M186 80 l6 2 l-6 2 Z"/><path d="M218 82 l2 5 l-4 -2 Z"/><path d="M268 80 l6 2 l-6 2 Z"/></g></g></svg>
+        <figcaption class="gallery-caption">
+          <div class="gallery-meta">Sümer-Akkad · Met Museum</div>
+          <div class="gallery-title">Çivi Yazılı Tablet</div>
+          <p class="gallery-desc">Ur'un günlük hayatı yazıyla işliyordu: borçlar, mahkemeler, dualar. Yazılı bir uygarlığın belgesi.</p>
+        </figcaption>
+      </figure>
+
+      <figure class="gallery-card">
+        <svg class="gallery-svg" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="harSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#bcd4dc"/><stop offset="55%" stop-color="#dcd0b0"/><stop offset="100%" stop-color="#e4cf9a"/></linearGradient><linearGradient id="harCone" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#d9b886"/><stop offset="55%" stop-color="#c49a64"/><stop offset="100%" stop-color="#a87c46"/></linearGradient><linearGradient id="harConeShade" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#b08a54"/><stop offset="100%" stop-color="#8a6638"/></linearGradient></defs><rect width="400" height="300" fill="url(#harSky)"/><circle cx="320" cy="60" r="26" fill="#f2e2b0" opacity="0.8"/><rect y="210" width="400" height="90" fill="#cbab6c"/><rect y="210" width="400" height="90" fill="#b8954e" opacity="0.3"/><g><path d="M40 212 Q40 150 62 150 Q84 150 84 212 Z" fill="url(#harConeShade)"/><path d="M300 212 Q300 158 320 158 Q340 158 340 212 Z" fill="url(#harConeShade)"/><path d="M340 212 Q340 165 356 165 Q372 165 372 212 Z" fill="url(#harConeShade)"/></g><g><path d="M90 212 Q90 130 120 130 Q150 130 150 212 Z" fill="url(#harCone)"/><path d="M120 130 Q150 130 150 212 L120 212 Z" fill="url(#harConeShade)" opacity="0.6"/><path d="M150 212 Q150 118 188 118 Q226 118 226 212 Z" fill="url(#harCone)"/><path d="M188 118 Q226 118 226 212 L188 212 Z" fill="url(#harConeShade)" opacity="0.6"/><path d="M226 212 Q226 132 256 132 Q286 132 286 212 Z" fill="url(#harCone)"/><path d="M256 132 Q286 132 286 212 L256 212 Z" fill="url(#harConeShade)" opacity="0.6"/></g><g stroke="#9a7440" stroke-width="0.7" opacity="0.4" fill="none"><path d="M96 195 Q120 190 144 195"/><path d="M100 175 Q120 170 140 175"/><path d="M105 155 Q120 152 135 155"/><path d="M156 195 Q188 189 220 195"/><path d="M160 172 Q188 166 216 172"/><path d="M166 148 Q188 143 210 148"/><path d="M172 128 Q188 125 204 128"/><path d="M232 195 Q256 190 280 195"/><path d="M236 172 Q256 167 276 172"/><path d="M242 150 Q256 146 270 150"/></g><g fill="#5e4528"><path d="M112 212 L112 192 Q120 186 128 192 L128 212 Z"/><path d="M176 212 L176 188 Q188 180 200 188 L200 212 Z"/><path d="M248 212 L248 194 Q256 188 264 194 L264 212 Z"/></g><ellipse cx="188" cy="214" rx="120" ry="8" fill="#000" opacity="0.1"/></svg>
+        <figcaption class="gallery-caption">
+          <div class="gallery-meta">Şanlıurfa · Bugün</div>
+          <div class="gallery-title">Harran: Konik Evler</div>
+          <p class="gallery-desc">Hicret yolculuğunun ikinci durağı. Türkiye'deki en köklü İbrahimî gelenek burada yaşar.</p>
+        </figcaption>
+      </figure>
+
+      <figure class="gallery-card">
+        <svg class="gallery-svg" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="bgSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#cdddd6"/><stop offset="100%" stop-color="#e6dab6"/></linearGradient><linearGradient id="bgWater" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5a9a8e"/><stop offset="50%" stop-color="#3d7d76"/><stop offset="100%" stop-color="#2a5e5a"/></linearGradient><linearGradient id="bgWall" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e0c896"/><stop offset="100%" stop-color="#c4a468"/></linearGradient></defs><rect width="400" height="300" fill="url(#bgSky)"/><rect x="0" y="70" width="400" height="95" fill="url(#bgWall)"/><g fill="#b89a5e"><path d="M30 165 L30 115 Q50 95 70 115 L70 165 Z"/><path d="M90 165 L90 115 Q110 95 130 115 L130 165 Z"/><path d="M150 165 L150 115 Q170 95 190 115 L190 165 Z"/><path d="M210 165 L210 115 Q230 95 250 115 L250 165 Z"/><path d="M270 165 L270 115 Q290 95 310 115 L310 165 Z"/><path d="M330 165 L330 115 Q350 95 370 115 L370 165 Z"/></g><g fill="#3a5d52"><path d="M36 165 L36 120 Q50 104 64 120 L64 165 Z"/><path d="M96 165 L96 120 Q110 104 124 120 L124 165 Z"/><path d="M156 165 L156 120 Q170 104 184 120 L184 165 Z"/><path d="M216 165 L216 120 Q230 104 244 120 L244 165 Z"/><path d="M276 165 L276 120 Q290 104 304 120 L304 165 Z"/><path d="M336 165 L336 120 Q350 104 364 120 L364 165 Z"/></g><rect x="350" y="40" width="14" height="75" fill="#d8bc84"/><path d="M350 40 L364 40 L357 26 Z" fill="#b89a5e"/><rect x="354" y="58" width="6" height="10" fill="#3a5d52"/><rect y="165" width="400" height="135" fill="url(#bgWater)"/><rect y="165" width="400" height="135" fill="#fff" opacity="0.04"/><g stroke="#7ab0a4" stroke-width="1.4" fill="none" opacity="0.45"><path d="M20 195 q20 -5 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0"/><path d="M0 220 q20 -5 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0"/><path d="M20 248 q20 -5 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0"/></g><g fill="#d4b878"><g transform="translate(70,205)"><ellipse cx="0" cy="0" rx="16" ry="6"/><path d="M14 0 l10 -6 l0 12 Z"/><circle cx="-9" cy="-1.5" r="1.3" fill="#3a2c18"/></g><g transform="translate(160,235) rotate(-8)"><ellipse cx="0" cy="0" rx="20" ry="7"/><path d="M18 0 l12 -7 l0 14 Z"/><circle cx="-11" cy="-2" r="1.5" fill="#3a2c18"/></g><g transform="translate(280,210) rotate(6)"><ellipse cx="0" cy="0" rx="14" ry="5"/><path d="M12 0 l9 -5 l0 10 Z"/><circle cx="-8" cy="-1" r="1.2" fill="#3a2c18"/></g><g transform="translate(320,255) rotate(-4)"><ellipse cx="0" cy="0" rx="18" ry="6"/><path d="M16 0 l10 -6 l0 12 Z"/><circle cx="-10" cy="-1.5" r="1.3" fill="#3a2c18"/></g><g transform="translate(110,270) rotate(10)"><ellipse cx="0" cy="0" rx="15" ry="5"/><path d="M13 0 l9 -5 l0 10 Z"/></g></g></svg>
+        <figcaption class="gallery-caption">
+          <div class="gallery-meta">Şanlıurfa · Bugün</div>
+          <div class="gallery-title">Balıklı Göl</div>
+          <p class="gallery-desc">Geleneğe göre Nemrut'un ateşinin gül bahçesine, közlerin balıklara dönüştüğü yer.</p>
+        </figcaption>
+      </figure>
+
+    </div>
+  </div>
+
+  <p>Hz. İbrahim'in yolculuğunu iki katmanda düşünmek gerekir. Bir yanda ayaklarının attığı fiziksel yol vardır: Ur'dan Harran'a, Harran'dan Kenan'a, oradan Mısır'a ve nihayet Mekke vadisine uzanan uzun bir hicret. Öte yanda ise daha derin, içeride yaşanan bir yolculuk: kavminin putları arasında doğan, sorgulamayla başlayan, tevhide ulaşan ve sonunda mutlak teslimiyetle olgunlaşan bir ruhun seyri. O her şehir değiştirdiğinde, içinde de bir şey değişiyordu.</p>
+
+  <p>Bu dünyayı anlamak için Ur'u bugünün metropolleriyle düşünmek aydınlatıcıdır: Ziggurat o çağın gökdeleni, çivi yazısı o çağın iletişim ağı, put endüstrisi ise o çağın en kârlı sektörüydü. Maddî olarak göz kamaştıran, manen ise çürümüş bir uygarlık. İşte böyle bir dünyada bir genç, gökyüzüne bakıp <em>"ben batanları sevmem"</em> diyecekti. Çünkü bir toplum gelişmiş mimariye, yazıya, hukuka ve zenginliğe sahip olabilir; ama bu, onun inancının doğru olduğu anlamına gelmez. Hz. İbrahim'in cesareti, tam da bu noktada, koca bir kalabalığa tek başına karşı durabilmesinde gizlidir.</p>
+
+  <div class="kopru">Şimdi bu güçlü medeniyetin tam ortasında, bir put yapımcısının evinde büyüyen genç adamı tanıyalım…</div>
+</section>
+
+<!-- ===================================================
+     BÖLÜM 3, BİYOGRAFİK ANLATI
+     =================================================== -->
+<section id="bolum-3">
+  <div class="section-num">Bölüm III</div>
+  <h2>Hz. İbrahim'in Hayatı <span class="h2-sub">Biyografik Anlatı</span></h2>
+
+  <div class="epigraph">
+    <p class="epigraph-text arabic">إِنَّ إِبْرَٰهِيمَ لَحَلِيمٌ أَوَّٰهٌ مُّنِيبٌ</p>
+    <p class="epigraph-text">"Şüphesiz İbrahim, çok yumuşak huylu, ah edip yakaran, gönülden Allah'a yönelen biriydi."</p>
+    <p class="epigraph-cite">Hûd 11/75</p>
+  </div>
+
+  <p class="lead">Hz. İbrahim'in hayatı, üç büyük tema etrafında örülür: hakikati arayan bir <em>gözlem</em>, batıla karşı duran bir <em>cesaret</em> ve Allah'a tam bir <em>teslimiyet</em>. Yıldız-ay-güneş muhakemesinde aklını, putları kırışında ve ateşe atılışında cesaretini, oğlunu kurban etme imtihanında ise teslimiyetini görürüz.</p>
+
+  <h3>a) Doğumu ve Ailesi</h3>
+  <p>Kur'an, babası için <strong>Âzer</strong> ismini verir (En'âm 74); Tevrat'ta ise <strong>Terah</strong> geçer. Klasik tefsirlerde iki yorum vardır: birincisine göre Âzer onun gerçek babasıdır, Terah lakap ya da künyedir; ikincisine göre Âzer onun amcası ya da üvey babasıdır, ona baba olarak hitap edilmesi ise Arap dil geleneğinde olağandır.</p>
+
+  <p>Âzer'in put yapımcısı olduğu ayrıntısı Kur'an'da doğrudan geçmez; ancak En'âm 74'te Hz. İbrahim'in ona putlar hakkında çağrıda bulunması, bu mesleğin klasik kıssa ve tefsir geleneğinde anlatıldığını gösterir. Tarihî olarak da Ur'da put yapımcılığının yaygın bir meslek olduğunu, Woolley'nin kazılarında ortaya çıkan evlerdeki put nişleri belgelemektedir.</p>
+
+  <h3>b) Hakikat Arayışı: Gök Tanrılarına Karşı Bir İddianame</h3>
+
+  <p>Bu kıssa çoğu zaman "İbrahim önce yıldıza taptı, sonra aya, sonra güneşe..." şeklinde okunur; oysa bu okuma yanlıştır. Doğru anlam şudur: Hz. İbrahim, kavminin tapındığı somut gök tanrılarına, yani Bölüm II'de tanıştığımız Sîn (Ay), Şamaş (Güneş) ve İştar (Venüs/Yıldız) adlı tanrılara karşı, bilerek onların mantığına girer ve "bu sizin tanrınızsa, neden batıyor?" diyerek bir hesap sorma yöntemi kurar. İbn Kesîr tefsiri de bu yorumdadır: bu kıssa, bir şahsî inanç arayışı değil, kavmine karşı kurulan aklî ve gözlemsel bir delillendirmedir.</p>
+
+  <p>Yani Hz. İbrahim soyut bir filozof değil, <strong>somut bir savcıdır.</strong> Karşısında somut tanrılar vardır; karşısındaki kavim "Sîn bizi korur, Şamaş bizi yönetir, İştar bize bereket verir" diyen bir kavimdir. O, bu inancı dıştan reddetmek yerine, onların kendi mantığının içine girer ve <em>içeriden çürütür.</em></p>
+
+  <p>Kur'an, bu muhakemenin neden bu kadar sağlam olduğunu daha baştan açıklar: bu, Hz. İbrahim'in kendi aklıyla bocaladığı bir el yordamı değil, Allah'ın ona göklerin ve yerin hakikatini gösterdiği bir <em>basîret</em> hâlidir.</p>
+
+  <div class="ayet">
+    <div class="ayet-ref">En'âm Suresi 6/75, Muhakemenin Girişi</div>
+    <p class="arabic">وَكَذَٰلِكَ نُرِي إِبْرَاهِيمَ مَلَكُوتَ السَّمَاوَاتِ وَالْأَرْضِ وَلِيَكُونَ مِنَ الْمُوقِنِينَ</p>
+    <p class="okunus">Ve kezâlike nürî İbrâhîme melekûtes-semâvâti vel-ardı ve liyekûne minel-mûkınîn.</p>
+    <div class="meal">"İşte böylece biz İbrahim'e göklerin ve yerin melekûtunu (muhteşem hükümranlığını) gösteriyorduk ki, kesin olarak inananlardan olsun."</div>
+  </div>
+
+  <!-- EDDEIYE / İDDİANAME -->
+  <div class="iddiana">
+    <div class="iddiana-header">Hz. İbrahim'in İddianamesi · En'âm 6/75-79</div>
+
+    <div class="iddiana-step">
+      <div class="iddiana-num">1</div>
+      <div class="iddiana-content">
+        <h5>Sanık: İştar (Venüs / Yıldız)</h5>
+        <div class="iddiana-ayet">
+          <div class="ia-ref">En'âm 6/76</div>
+          <p class="ia-ar">فَلَمَّا جَنَّ عَلَيْهِ اللَّيْلُ رَأَىٰ كَوْكَبًا ۖ قَالَ هَٰذَا رَبِّي ۖ فَلَمَّا أَفَلَ قَالَ لَا أُحِبُّ الْآفِلِينَ</p>
+          <p class="ia-ok">Fe lemmâ cenne aleyhil-leylü raâ kevkebâ, kâle hâzâ rabbî, fe lemmâ efele kâle lâ uhibbül-âfilîn.</p>
+          <p class="ia-tr">"Üzerine gece karanlığı basınca bir yıldız gördü. 'İşte Rabbim!' dedi. Yıldız batınca da, 'Ben batanları sevmem' dedi."</p>
+        </div>
+        <p><strong>Mantık çürütmesi:</strong> Sabah olunca İştar'ın görünmez olması, onun bağımsız ilahlığını yok eder. Bir tanrı tarihinde gizlenemez, kaybolamaz.</p>
+      </div>
+    </div>
+
+    <div class="iddiana-step">
+      <div class="iddiana-num">2</div>
+      <div class="iddiana-content">
+        <h5>Sanık: Sîn (Ay), Ur'un Baş Tanrısı</h5>
+        <div class="iddiana-ayet">
+          <div class="ia-ref">En'âm 6/77</div>
+          <p class="ia-ar">فَلَمَّا رَأَى الْقَمَرَ بَازِغًا قَالَ هَٰذَا رَبِّي ۖ فَلَمَّا أَفَلَ قَالَ لَئِن لَّمْ يَهْدِنِي رَبِّي لَأَكُونَنَّ مِنَ الْقَوْمِ الضَّالِّينَ</p>
+          <p class="ia-ok">Fe lemmâ rael-kamera bâzigan kâle hâzâ rabbî, fe lemmâ efele kâle leil lem yehdinî rabbî le ekûnenne minel-kavmid-dâllîn.</p>
+          <p class="ia-tr">"Ay'ı doğarken görünce, 'İşte Rabbim!' dedi. Ay da batınca, 'Andolsun ki, Rabbim bana doğru yolu göstermezse, mutlaka ben de sapıklardan olurum' dedi."</p>
+        </div>
+        <p><strong>Mantık çürütmesi:</strong> Sîn batıyor. Ur'un Ziggurat'ında tapındığınız tanrı, her sabah ufkun altına düşüyor. Geceleyin geri gelse de, <em>gidip gelen bir varlık, hep-orada-olan Yaratıcı olamaz.</em></p>
+      </div>
+    </div>
+
+    <div class="iddiana-step">
+      <div class="iddiana-num">3</div>
+      <div class="iddiana-content">
+        <h5>Sanık: Şamaş (Güneş), Adaletin Tanrısı</h5>
+        <div class="iddiana-ayet">
+          <div class="ia-ref">En'âm 6/78</div>
+          <p class="ia-ar">فَلَمَّا رَأَى الشَّمْسَ بَازِغَةً قَالَ هَٰذَا رَبِّي هَٰذَا أَكْبَرُ ۖ فَلَمَّا أَفَلَتْ قَالَ يَا قَوْمِ إِنِّي بَرِيءٌ مِّمَّا تُشْرِكُونَ</p>
+          <p class="ia-ok">Fe lemmâ raeş-şemse bâzigaten kâle hâzâ rabbî hâzâ ekber, fe lemmâ efelet kâle yâ kavmi innî berîün mimmâ tüşrikûn.</p>
+          <p class="ia-tr">"Güneşi doğarken görünce de, 'İşte benim Rabbim! Bu daha büyük' dedi. O da batınca, 'Ey kavmim! Ben sizin Allah'a ortak koştuğunuz şeylerden uzağım' dedi."</p>
+        </div>
+        <p><strong>Mantık çürütmesi:</strong> Hammurabi'nin kanunları aldığını iddia ettiği Şamaş bile batıyor. Üstelik en büyüğüydü, en parlağıydı! Demek ki <strong>parlaklık ya da büyüklük, ilahlık kanıtı değildir.</strong> Üçü de aynı kuralla bağlıdır: doğmak, batmak.</p>
+      </div>
+    </div>
+
+    <div class="iddiana-verdict">
+      <span style="display:block; font-family:'Cormorant SC','Cinzel',serif; font-size:0.78rem; letter-spacing:0.3em; color:var(--burgundy); margin-bottom:0.8rem;">HÜKÜM</span>
+      Bu üç ilah da <em>kanun altındadır.</em> Kanunu koyan ise <em>kanuna tâbi olamaz.</em><br>
+      <strong>Yaratıcı, kendi koyduğu yörüngeye mahkûm olan değildir.</strong>
+    </div>
+  </div>
+
+  <div class="ayet">
+    <div class="ayet-ref">En'âm Suresi 6/79, Sonuç Beyanı</div>
+    <p class="arabic">إِنِّي وَجَّهْتُ وَجْهِيَ لِلَّذِي فَطَرَ السَّمَاوَاتِ وَالْأَرْضَ حَنِيفًا وَمَا أَنَا مِنَ الْمُشْرِكِينَ</p>
+    <p class="okunus">İnnî veccehtü vechiye lillezî fataras-semâvâti vel-arda hanîfen ve mâ ene minel-müşrikîn.</p>
+    <div class="meal">"Ben yüzümü, gökleri ve yeri yaratan Allah'a hanîf olarak çevirdim; ben müşriklerden değilim."</div>
+  </div>
+
+  <p>Bu muhakemenin en çarpıcı yanı, geçerliliğini bugün dahi koruyor olmasıdır. Bugün biliyoruz ki yıldızlar dev gaz toplarıdır, güneş orta yaşlı bir yıldızdır, ay sönmüş bir uydudur. Hz. İbrahim ise 4000 yıl önce, hiçbir teleskobu olmadan, yalnızca <strong>batışı gözlemleyerek</strong> aynı temel ilkeye ulaşmıştı: her gözlemlenebilir şey başka bir şeye tâbidir; mutlak surette özerk olan ise yalnızca Yaratıcı'dır.</p>
+
+  <div class="pull-quote">
+    <p class="pull-quote-text">Batan, <strong>ilah olamaz.</strong> İşte 4000 yıl önce bir gencin gökyüzüne bakarak vardığı sonuç, ve bugün, sönmüş galaksilerin gözlemlendiği bir çağda dahi sarsılmadan duran bir hakikat.</p>
+  </div>
+
+  <h3>c) Putları Kırması</h3>
+
+  <p>Putların kırılışından hemen önce Kur'an, çok ince bir sahne aktarır. Bir bayram arifesinde kavmi onu da tören alanına çağırır; Hz. İbrahim ise <strong>yıldızlara bir göz atar</strong> ve <em>"Ben hastayım"</em> diyerek geride kalır. Böylece herkes şehir dışına çıkınca, mabette putlarla baş başa kalacaktır.</p>
+
+  <div class="ayet">
+    <div class="ayet-ref">Saffat Suresi 37/88-90</div>
+    <p class="arabic">فَنَظَرَ نَظْرَةً فِي النُّجُومِ ۝ فَقَالَ إِنِّي سَقِيمٌ ۝ فَتَوَلَّوْا عَنْهُ مُدْبِرِينَ</p>
+    <p class="okunus">Fe nazara nazraten fin-nücûm. Fe kâle innî sakîm. Fe tevellev anhü müdbirîn.</p>
+    <div class="meal">"Derken yıldızlara bir göz attı ve 'Ben hastayım' dedi. Bunun üzerine arkalarını dönüp ondan uzaklaştılar."</div>
+  </div>
+
+  <p>Bu kısacık sahne, ancak Hz. İbrahim'in dünyasını tanıyınca anlam kazanır. Çünkü o, <strong>astrolojinin (yıldız falının) devlet diniyle iç içe geçtiği bir uygarlıkta</strong> yaşıyordu.</p>
+
+  <div class="dikkat">
+    <span class="dikkat-label">Astronomi mi, Astroloji mi?</span>
+    <p>Bu iki kavramı ayırmak gerekir. <strong>Astronomi</strong>, gök cisimlerinin hareketini <em>ölçen</em> bilimdir; gözlemdir, matematiktir. <strong>Astroloji</strong> ise bu hareketlerin insan kaderini <em>belirlediğine</em> inanan bir kehanet sistemidir. Mezopotamya, ikisinin de beşiğiydi: Sümer ve Babil rahipleri Ziggurat'ların tepesinden gezegenleri kusursuz bir titizlikle gözlemler (astronomi), ama bu gözlemleri "tanrıların iradesini okumak" için kullanırlardı (astroloji). Gökyüzü onlar için bir <em>takvim</em> değil, bir <em>kehanet levhasıydı.</em> Kralların savaşa çıkıp çıkmayacağına, hasadın bereketine, hatta bir çocuğun kaderine yıldızların konumuna bakılarak karar verilirdi.</p>
+  </div>
+
+  <p>İşte Hz. İbrahim'in <em>"yıldızlara bir göz atıp 'hastayım' demesi"</em> bu zemine oturur. Müfessirler bu sahneyi iki düzeyde okur. Bir yandan, kavminin <em>kendi diline</em> konuşmuştur: yıldız falına inanan bir topluma, "yıldızlar bana bir rahatsızlık gösteriyor" anlamına gelebilecek, onların kabul edeceği bir mazeret sunmuştur, böylece töreni terk edip planını gerçekleştirebilmiştir. Öte yandan bu söz bir <em>tevriye</em>dir, yani iki anlamı olan, ama yalan olmayan bir ifadedir: putperestliğin ortasında bir tevhid elçisi olmanın verdiği o gerçek <em>kalbî sıkıntıyı</em>, "bu sapkınlık beni hasta ediyor" duygusunu da dile getirir. Hadis-i şerifte, Hz. İbrahim'in hayatı boyunca söylediği, görünüşte hakikati örten üç sözden biri olarak bu ifade anılır (bkz. <a href="#hadisler">EK B, Hadis II</a>).</p>
+
+  <p>Burada asıl çarpıcı olan şudur: Hz. İbrahim, kavminin <strong>en kutsal saydığı şeyi, gökyüzünü ve yıldızları, bizzat onlara karşı bir koz olarak kullanmıştır.</strong> Onların kâhinlik aracını alıp, putlarını kırmak için bir kapı aralar. Yıldızlara tapan bir topluma, yıldızların aslında hiçbir şey buyurmadığını; onların da, taştan putlar gibi, kendi başlarına âciz olduğunu gösterecektir.</p>
+
+  <p>Kavim uzaklaşınca Hz. İbrahim mabede girer, putların hepsini balta ile kırar ve baltayı <strong>en büyük putun boynuna</strong> asar. Bu, salt bir öfke patlaması değil, <strong>dâhiyâne bir tebliğ yöntemidir.</strong></p>
+
+  <div class="ayet">
+    <div class="ayet-ref">Enbiyâ Suresi 21/63</div>
+    <p class="arabic">قَالَ بَلْ فَعَلَهُ كَبِيرُهُمْ هَٰذَا فَاسْأَلُوهُمْ إِن كَانُوا يَنطِقُونَ</p>
+    <p class="okunus">Kâle bel fealehû kebîruhüm hâzâ fes'elûhüm in kânû yentıkûn.</p>
+    <div class="meal">"Dedi ki: 'Hayır! Bunu şu büyükleri yapmıştır. Konuşabiliyorlarsa, haydi onlara sorun!'"</div>
+  </div>
+
+  <p>Döndüklerinde hesap soran kavmi mantık çıkmazına düşürür. Onlar <em>"Sen de bilirsin ki bunlar konuşmaz"</em> diye itiraf etmek zorunda kalır; ve işte tam da bu itiraf, Hz. İbrahim'in kurduğu tuzaktır. Cevabı, bütün bir putperest düzenin temelini çatırdatır:</p>
+
+  <div class="ayet">
+    <div class="ayet-ref">Enbiyâ Suresi 21/66-67</div>
+    <p class="arabic">قَالَ أَفَتَعْبُدُونَ مِن دُونِ اللَّهِ مَا لَا يَنفَعُكُمْ شَيْئًا وَلَا يَضُرُّكُمْ ۝ أُفٍّ لَّكُمْ وَلِمَا تَعْبُدُونَ مِن دُونِ اللَّهِ ۖ أَفَلَا تَعْقِلُونَ</p>
+    <p class="okunus">Kâle e fe ta'büdûne min dûnillâhi mâ lâ yenfeuküm şey'en ve lâ yedurruküm. Üffin leküm ve limâ ta'büdûne min dûnillâh, e fe lâ ta'kılûn.</p>
+    <div class="meal">"Dedi ki: 'Allah'ı bırakıp da size hiçbir fayda ve zarar veremeyen şeylere mi tapıyorsunuz? Yazıklar olsun size ve Allah'tan başka taptıklarınıza! Hâlâ aklınızı kullanmayacak mısınız?'"</div>
+  </div>
+
+  <h3>d) Ateşe Atılması</h3>
+  <div class="ayet">
+    <div class="ayet-ref">Enbiya Suresi 21/69</div>
+    <p class="arabic">قُلْنَا يَا نَارُ كُونِي بَرْدًا وَسَلَامًا عَلَىٰ إِبْرَاهِيمَ</p>
+    <p class="okunus">Kulnâ yâ nâru kûnî berden ve selâmen alâ İbrâhîm.</p>
+    <div class="meal">"Biz, 'Ey ateş! İbrahim'e karşı serinlik ve esenlik ol' dedik."</div>
+  </div>
+
+  <p><strong>Teolojik analiz:</strong> Ateş, fiziksel yasalarına Allah'ın izniyle bağlıdır. Yasayı koyan, dilediğinde onu askıya alır. Bu mucize iki şeyi öğretir: mutlak teslimiyetin sonucu mutlak korumadır; ve yaratılmış hiçbir güç, Yaratıcı'nın iradesi önünde bağımsız değildir.</p>
+
+  <p>Ne var ki o ateş, yalnızca fiziksel bir alev değildir. Toplum baskısı, kınanma, dışlanma, yalnız kalma korkusu, bunların hepsi de birer ateştir. Hz. İbrahim'in ateşin ortasında yaşadığı huzur, aslında imanın insana verdiği o sarsılmaz iç sükûnetin timsalidir. "Serin ve esenlik ol" emri, her çağda, hakikat uğruna bedel ödemeyi göze alan herkesin kalbinde tekrar eder.</p>
+
+  <h3>e) Nemrut ile Diyalog</h3>
+  <p>Bu sahnede iktidarın kibri ile peygamberin aklı karşı karşıya gelir. Kur'an, Hz. İbrahim ile zamanın zorba kralı (gelenekte Nemrut) arasındaki tartışmayı şöyle aktarır:</p>
+
+  <div class="ayet">
+    <div class="ayet-ref">Bakara Suresi 2/258</div>
+    <p class="arabic">أَلَمْ تَرَ إِلَى الَّذِي حَاجَّ إِبْرَاهِيمَ فِي رَبِّهِ أَنْ آتَاهُ اللَّهُ الْمُلْكَ إِذْ قَالَ إِبْرَاهِيمُ رَبِّيَ الَّذِي يُحْيِي وَيُمِيتُ قَالَ أَنَا أُحْيِي وَأُمِيتُ ۖ قَالَ إِبْرَاهِيمُ فَإِنَّ اللَّهَ يَأْتِي بِالشَّمْسِ مِنَ الْمَشْرِقِ فَأْتِ بِهَا مِنَ الْمَغْرِبِ فَبُهِتَ الَّذِي كَفَرَ</p>
+    <p class="okunus">E lem tera ilellezî hâcce İbrâhîme fî rabbihî en âtâhullâhül-mülk, iz kâle İbrâhîmü rabbiyellezî yuhyî ve yümît, kâle ene uhyî ve ümît, kâle İbrâhîmü fe innallâhe ye'tî biş-şemsi minel-meşrikı fe'ti bihâ minel-mağribi fe bühitellezî kefer.</p>
+    <div class="meal">"Allah kendisine hükümranlık verdi diye Rabbi hakkında İbrahim'le tartışan kimseyi görmedin mi? İbrahim, 'Benim Rabbim, hayat veren ve öldürendir' demişti. O, 'Hayat veren ve öldüren benim' dedi. İbrahim, 'Allah güneşi doğudan getirir; haydi sen onu batıdan getir' deyince inkâr eden o kişi şaşırıp kaldı."</div>
+  </div>
+
+  <p>Diyaloğun yapısı çarpıcıdır:</p>
+  <div class="table-scroll">
+  <table>
+    <thead><tr><th>Aşama</th><th>Hz. İbrahim</th><th>Nemrut</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>"Rabbim hayat verir ve öldürür"</td><td>"Hayatı ben de veririm, öldürürüm de" <em>(örn. ölüm cezalısını affederim)</em></td></tr>
+      <tr><td>2</td><td>"Allah güneşi doğudan getirir; sen batıdan getir"</td><td>(Donakaldı, <em>"buhite"</em>)</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Hz. İbrahim, yüzeysel cevabı çürütmek için zaman harcamadan tartışmayı <strong>üst düzeye sıçratır.</strong> Bu yalnızca dinî bir delil değil, aynı zamanda zarif bir felsefî argümandır: yerel iktidar ile kozmik iktidar arasındaki uçurumu tek bir cümlede gözler önüne serer. Üstelik dikkat edilirse delili yine <em>gökyüzünden</em> seçer, güneşin doğuşunu buyuran gücün karşısında, bir kralın "ben de tanrıyım" iddiası bir anda gülünç kalır.</p>
+
+  <h3>f) Hicret: Ur → Harran → Kenan → Mısır</h3>
+  <p>Hz. İbrahim <em>"Ben Rabbime hicret ediyorum"</em> (Ankebut 26) der. Güzergâhın tamamı için <strong>EK A: Hicret Haritası</strong>'na bakınız. Hicret sadece coğrafî bir yolculuk değildir; <em>ahlakî bir prensiptir: Allah için terk edebilmek.</em> Hicretin lugat anlamı "terk etmek"tir. Bir şehri değil; bir alışkanlığı, bir kibri, bir konforu, bir putu terk etmek...</p>
+
+  <h3>g) Eşleri: Sare ve Hacer; Mısır'da Zorba Kral</h3>
+  <p><strong>Hz. Sare:</strong> İlk eşi, Hz. İbrahim'in akrabası. <strong>Hz. Hacer:</strong> Klasik kaynaklara göre Mısır'da zorba kral tarafından Sare'ye hediye edilen kadın; sonra Hz. İbrahim'e nikâhlandı.</p>
+
+  <p><strong>Hadis kaynağı:</strong> <strong>Sahih Buhârî, Kitâbü'l-Enbiyâ, No: 3358</strong> ve <strong>Sahih Müslim, No: 2371</strong>: Mısır'da Hz. İbrahim Sare'yi "kız kardeşim" (din kardeşi) olarak tanıttı; kral Sare'ye uzanmaya kalkıştığında eli üç kez felç oldu, sonunda özür dileyip Sare'yi serbest bırakıp ona Hacer'i hediye etti. <em>(Hadisin tam Türkçe metni için EK B'ye bakınız.)</em></p>
+
+  <p>Hz. Hacer, kıssanın yardımcı bir kişi değil, kendi başına bir kahramandır. İleride göreceğimiz gibi, hac sırasında her yıl milyonlarca insan tam da onun çaresizlik içinde umutla attığı adımları tekrarlar; İslâm'ın en büyük ibadetlerinden biri, bir annenin evladı için koşusunu ebedîleştirir.</p>
+
+  <h3>h) Yeğeni Hz. Lût</h3>
+  <p>Hz. Lût (a.s.), Hz. İbrahim'in kardeşi Hârân'ın oğludur. Hz. İbrahim'le birlikte hicret etti. Sonra <strong>Sodom ve Gomora</strong> bölgesine peygamber gönderildi. İlginç bağlantı: <strong>Hûd 69-76</strong>, meleklerin Hz. İbrahim'e oğlu İshak'ın müjdesini getirirken, aynı yolculukta Hz. Lût'a kavmin azabı haberini taşıdığını anlatır.</p>
+
+  <h3>i) Çocukları</h3>
+  <p><strong>Hz. İsmail (a.s.):</strong> Hacer'den dünyaya geldi. Mekke'ye ve Kâbe'ye bağlanan soyun atasıdır; <em>Hz. Muhammed (s.a.v.) de onun soyundan gelmektedir.</em><br>
+  <strong>Hz. İshak (a.s.):</strong> Sare'den, yaşlılık çağında müjdelendi (Hûd 71). İsrailoğullarının atasıdır: Yakub → on iki kabile → Hz. Musa, Davud, Süleyman, İsa (hepsi a.s.) onun soyundandır.</p>
+  <p>İki oğul, <strong>dünyanın iki büyük peygamberlik damarının kaynağı</strong>dır.</p>
+
+  <h3>j) En Büyük İmtihan: Oğlunu Kurban Etme Emri</h3>
+  <div class="ayet">
+    <div class="ayet-ref">Saffat Suresi 37/102-107</div>
+    <p class="arabic">فَلَمَّا بَلَغَ مَعَهُ السَّعْيَ قَالَ يَا بُنَيَّ إِنِّي أَرَىٰ فِي الْمَنَامِ أَنِّي أَذْبَحُكَ فَانظُرْ مَاذَا تَرَىٰ ۚ قَالَ يَا أَبَتِ افْعَلْ مَا تُؤْمَرُ ۖ سَتَجِدُنِي إِن شَاءَ اللَّهُ مِنَ الصَّابِرِينَ ۝ فَلَمَّا أَسْلَمَا وَتَلَّهُ لِلْجَبِينِ ۝ وَنَادَيْنَاهُ أَن يَا إِبْرَاهِيمُ ۝ قَدْ صَدَّقْتَ الرُّؤْيَا ۚ إِنَّا كَذَٰلِكَ نَجْزِي الْمُحْسِنِينَ ۝ إِنَّ هَٰذَا لَهُوَ الْبَلَاءُ الْمُبِينُ ۝ وَفَدَيْنَاهُ بِذِبْحٍ عَظِيمٍ</p>
+    <p class="okunus">Fe lemmâ belega meahüs-sa'ye kâle yâ büneyye innî erâ fil-menâmi ennî ezbehuke fenzur mâzâ terâ, kâle yâ ebetif'al mâ tü'meru setecidünî inşâallâhü mines-sâbirîn. Fe lemmâ eslemâ ve tellehû lil-cebîn. Ve nâdeynâhü en yâ İbrâhîm. Kad saddaktar-ru'yâ, innâ kezâlike neczil-muhsinîn. İnne hâzâ le hüvel-belâül-mübîn. Ve fedeynâhü bi zibhın azîm.</p>
+    <div class="meal">"Çocuk babasıyla birlikte koşup yürüyecek çağa erince, İbrahim 'Yavrucuğum! Ben rüyamda seni boğazladığımı görüyorum. Bir düşün, ne dersin?' dedi. O da 'Babacığım! Emrolunduğun şeyi yap. İnşallah beni sabredenlerden bulursun' dedi. İkisi de teslim olup, onu alnı üzerine yatırınca, biz ona şöyle seslendik: 'Ey İbrahim! Rüyayı gerçekleştirdin. Şüphesiz biz iyilik yapanları böyle mükâfatlandırırız. Şüphesiz bu, apaçık bir imtihandı.' Biz, ona büyük bir kurbanlık fidye verdik."</div>
+  </div>
+
+  <p>Bu imtihanın derinliği üç ayrı tarafta birden okunur. Baba tarafında: yıllarca dua edip ileri yaşta kavuştuğu oğlunu kendi eliyle kurban etmeye razı olan bir babanın teslimiyeti, bu, İslâm'ın yani teslimiyetin zirvesidir. Oğul tarafında: bir gencin korkmadan <em>"Babacığım, emrolunduğun şeyi yap"</em> diyebilmesi, gönülden gelen bir rıza. Allah tarafında ise: emrin son anda durdurulması ve büyük bir kurbanlığın (koç) fidye olarak verilmesi. Buradaki mesaj açıktır: <strong>Allah insanın canını değil, kalbini ister.</strong></p>
+
+  <div class="dikkat">
+    <span class="dikkat-label">Kurban Edilen Oğul Kim?</span>
+    <p>Saffat suresinde ismi geçmez. Ancak bu kıssanın hemen ardından Hz. İshak'ın <strong>yeni</strong> müjdelenmesi (Saffat 112), İslam âlimlerinin <em>cumhuruna göre</em> kurban edilenin İshak'tan <strong>önce</strong> doğan İsmail olduğunu gösterir. Bu mesele Bölüm V'te karşılaştırmalı olarak ele alınacaktır.</p>
+  </div>
+
+  <p>İşte Kurban Bayramı'nın kökeni budur. Müslümanlar her yıl bu olayı anarak kurban keserler; ve bu, aslında <em>"Ben de İbrahim gibi, en sevdiklerimden Allah için vazgeçebilirim"</em> demenin simgesel beyanıdır.</p>
+
+  <p>Hz. İbrahim'in hayatına topluca bakıldığında, onun babasına, kavmine, krala, ateşe ve nihayet en sevdiği oğluna karşı sırayla sınandığı görülür. Her sınavda aynı sarsılmaz duruşu sergilemiş; hakikati savunurken bile inceliğini, sevgisini ve teslimiyetini hiç kaybetmemiştir.</p>
+
+  <div class="kopru">Nemrut'un ateşinden, Mısır kralının sarayından, ailesinin imtihanından sağ çıkan bu peygamber, şimdi başka bir "ateşin", yani kızgın bir çöl vadisinin ortasına gidecek. Mekke'ye…</div>
+</section>
+
+<!-- ===================================================
+     BÖLÜM 4, KÂBE VE HAC
+     =================================================== -->
+<section id="bolum-4">
+  <div class="section-num">Bölüm IV</div>
+  <h2>Hz. İbrahim, Kâbe ve Hac <span class="h2-sub">Bir Annenin Ayak İzleri</span></h2>
+
+  <div class="epigraph">
+    <p class="epigraph-text arabic">وَإِذْ جَعَلْنَا ٱلْبَيْتَ مَثَابَةً لِّلنَّاسِ وَأَمْنًا وَٱتَّخِذُوا۟ مِن مَّقَامِ إِبْرَٰهِۦمَ مُصَلًّى</p>
+    <p class="epigraph-text">"Hatırla ki, Beytullah'ı insanlar için bir toplanma yeri ve güven mekânı kılmıştık. 'İbrahim'in makamından bir namazgâh edinin' (dedik)."</p>
+    <p class="epigraph-cite">Bakara 2/125</p>
+  </div>
+
+  <p class="lead">Hac, dünyanın en büyük yıllık ibadetidir; ve <strong>bütün ritüelleri Hz. İbrahim ailesinin çile sahnelerini canlandırır.</strong> Bir babanın teslimiyeti, bir annenin koşusu, bir oğulun rızası, bir vadinin mucizesi…</p>
+
+  <h3>Mekke Vadisine Yolculuk</h3>
+  <p>Allah'ın emriyle Hz. İbrahim, Hacer'i ve süt bebeği İsmail'i çorak bir vadiye, bugünkü Mekke'ye, bırakır. Ne ev vardır, ne su, ne komşu, ne kervan yolu.</p>
+
+  <div class="hadis">
+    <span class="hadis-label">Hadis</span>
+    <div class="hadis-ref">Sahih Buhârî, Kitâbü'l-Enbiyâ, No: 3365, İbn Abbas (r.a.) rivayeti (özet)</div>
+    <div class="hadis-text">
+      <q>Hacer İbrahim'in arkasından koşarak şöyle dedi: "Ey İbrahim! Konuşacak insanın, yiyeceğin ve içecek suyun olmadığı bu vadide bizi kime bırakıp gidiyorsun?" Bunu birkaç kez tekrarladı, fakat İbrahim ona dönüp bakmadı bile. Sonunda Hacer: "Bunu sana Allah mı emretti?" diye sordu. İbrahim: "Evet" dedi. Hacer: "Öyleyse Allah bizi zayi etmez" dedi ve geri döndü.</q>
+    </div>
+    <p style="font-size: 0.9rem; color: var(--ink-muted); font-style: italic; margin-top: 0.8rem;">Hadisin tam Türkçe metni için bkz. <a href="#hadisler">EK B</a>.</p>
+  </div>
+
+  <p>Bu cevap, <strong>Müslüman bir kadının dünyasına yontulmuş bir tevekkül anıtıdır</strong>. Hacer çaresiz değildir, bir bilinçtedir.</p>
+
+  <div class="pull-quote">
+    <p class="pull-quote-text">"Bunu sana Allah mı emretti?" <strong>"Evet."</strong> "Öyleyse Allah bizi zayi etmez."</p>
+    <p class="pull-quote-attr">Hacer · Mekke Vadisi · M.Ö. ~1800</p>
+  </div>
+
+  <h3>Zemzem'in Fışkırması</h3>
+  <p>Bebek İsmail susuzluktan ağlayınca Hacer, Safa ve Merve tepeleri arasında <strong>yedi defa</strong> koşar. Buhârî rivayeti şöyle aktarır: Cebrail'in topuğu (yahut kanat ucu) yere değer ve <strong>Zemzem</strong> fışkırır. Hacer "Zem! Zem!" (Dur! Dur!) diyerek suyu kontrol altına alır.</p>
+
+  <div class="dikkat">
+    <span class="dikkat-label">Bir İncelik</span>
+    <p>Hacer hem Allah'a güvenir, hem de <strong>koşar</strong>. Bu, "tevekkül" kavramının canlı tanımıdır: <em>pasif beklemek değil, güvenerek gayret etmek.</em></p>
+  </div>
+
+  <p>Zemzem'in fışkırması üzerine <strong>Curhum kabilesi</strong> Hacer'in izniyle oraya yerleşir. Böylece çorak vadi yavaş yavaş bir yerleşim yeri haline gelir, <strong>Mekke'nin temeli atılır.</strong></p>
+
+  <h3>Kâbe'nin İnşası</h3>
+  <p>Yıllar sonra Hz. İbrahim, oğlu İsmail büyüdüğünde Mekke'ye döner ve birlikte Allah'ın evi olan <strong>Kâbe</strong>'yi (yeniden) inşa ederler.</p>
+
+  <div class="ayet">
+    <div class="ayet-ref">Bakara Suresi 2/127-129</div>
+    <p class="arabic">وَإِذْ يَرْفَعُ إِبْرَاهِيمُ الْقَوَاعِدَ مِنَ الْبَيْتِ وَإِسْمَاعِيلُ رَبَّنَا تَقَبَّلْ مِنَّا إِنَّكَ أَنْتَ السَّمِيعُ الْعَلِيمُ ۝ رَبَّنَا وَاجْعَلْنَا مُسْلِمَيْنِ لَكَ وَمِن ذُرِّيَّتِنَا أُمَّةً مُسْلِمَةً لَّكَ وَأَرِنَا مَنَاسِكَنَا وَتُبْ عَلَيْنَا إِنَّكَ أَنتَ التَّوَّابُ الرَّحِيمُ ۝ رَبَّنَا وَابْعَثْ فِيهِمْ رَسُولًا مِّنْهُمْ يَتْلُو عَلَيْهِمْ آيَاتِكَ وَيُعَلِّمُهُمُ الْكِتَابَ وَالْحِكْمَةَ وَيُزَكِّيهِمْ ۚ إِنَّكَ أَنتَ الْعَزِيزُ الْحَكِيمُ</p>
+    <p class="okunus">Ve iz yerfeu İbrâhîmül-kavâide minel-beyti ve İsmâîl, rabbenâ tekabbel minnâ inneke entes-semîul-alîm. Rabbenâ vec'alnâ müslimeyni leke ve min zürriyyetinâ ümmeten müslimeten leke ve erinâ menâsikenâ ve tüb aleynâ inneke entet-tevvâbür-rahîm. Rabbenâ veb'as fîhim rasûlen minhüm yetlû aleyhim âyâtike ve yuallimühümül-kitâbe vel-hikmete ve yüzekkîhim, inneke entel-azîzül-hakîm.</p>
+    <div class="meal">"İbrahim, İsmail ile beraber Beyt'in temellerini yükseltirken (şöyle dua ediyorlardı): 'Ey Rabbimiz! Bizden bunu kabul buyur; şüphesiz sen hakkıyla işiten ve bilensin. Rabbimiz! Bizi sana boyun eğenlerden kıl, neslimizden de sana itaat eden bir ümmet çıkar, bize ibadet yerlerimizi (menâsikimizi) göster, tövbemizi kabul et... Rabbimiz! İçlerinden onlara senin ayetlerini okuyacak, onlara kitap ve hikmeti öğretecek, onları arındıracak bir peygamber gönder...'"</div>
+  </div>
+
+  <p>Bu dua tarihte yankılandı. <strong>"Onlara bir peygamber gönder"</strong> duası, 2600 yıl sonra <strong>Hz. Muhammed (s.a.v.) ile cevap buldu!</strong> Hz. Peygamber'in kendisi bunu <em>"Ben atam İbrahim'in duasıyım, kardeşim İsa'nın müjdesiyim, annem(in) gördüğü rüyanın gerçekleşmesiyim"</em> hadisinde dile getirmiştir (Ahmed b. Hanbel, Müsned IV/127).</p>
+
+  <div class="gallery">
+    <div class="gallery-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));">
+
+      <figure class="gallery-card">
+        <svg class="gallery-svg" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><defs><radialGradient id="kabSky" cx="0.5" cy="0.3" r="0.9"><stop offset="0%" stop-color="#3a4a64"/><stop offset="100%" stop-color="#1a2236"/></radialGradient><linearGradient id="kabBlack" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2a2620"/><stop offset="100%" stop-color="#16130e"/></linearGradient><radialGradient id="kabFloor" cx="0.5" cy="0.4" r="0.8"><stop offset="0%" stop-color="#d8d2c4"/><stop offset="100%" stop-color="#b0a894"/></radialGradient></defs><rect width="400" height="300" fill="url(#kabSky)"/><g fill="#f0e6c8"><circle cx="40" cy="40" r="1"/><circle cx="90" cy="25" r="0.8"/><circle cx="150" cy="45" r="1.2"/><circle cx="320" cy="35" r="1"/><circle cx="360" cy="60" r="0.8"/><circle cx="280" cy="22" r="0.9"/><circle cx="60" cy="70" r="0.7"/><circle cx="350" cy="100" r="0.8"/></g><ellipse cx="200" cy="270" rx="220" ry="80" fill="url(#kabFloor)"/><g fill="none" stroke="#fff" stroke-width="1" opacity="0.12"><ellipse cx="200" cy="255" rx="150" ry="48"/><ellipse cx="200" cy="255" rx="110" ry="35"/><ellipse cx="200" cy="255" rx="75" ry="24"/></g><g><rect x="158" y="120" width="84" height="105" fill="url(#kabBlack)"/><polygon points="242,120 268,135 268,232 242,225" fill="#0e0c08"/><polygon points="158,120 242,120 268,135 184,135" fill="#1e1a14"/></g><rect x="158" y="150" width="84" height="11" fill="#c9a84e"/><polygon points="242,150 268,165 268,176 242,161" fill="#a8863a"/><rect x="192" y="172" width="20" height="53" fill="#c9a84e"/><rect x="195" y="176" width="14" height="49" fill="#a8863a"/><path d="M150 225 Q140 205 160 200" fill="none" stroke="#cfc7b4" stroke-width="3" opacity="0.6"/><g fill="#e8e2d4"><ellipse cx="120" cy="240" rx="5" ry="11"/><circle cx="120" cy="228" r="3.5"/><ellipse cx="140" cy="252" rx="5" ry="11"/><circle cx="140" cy="240" r="3.5"/><ellipse cx="280" cy="240" rx="5" ry="11"/><circle cx="280" cy="228" r="3.5"/><ellipse cx="300" cy="250" rx="5" ry="11"/><circle cx="300" cy="238" r="3.5"/><ellipse cx="100" cy="258" rx="5" ry="11"/><circle cx="100" cy="246" r="3.5"/><ellipse cx="320" cy="262" rx="5" ry="11"/><circle cx="320" cy="250" r="3.5"/></g><g fill="#d4cdbb"><ellipse cx="160" cy="268" rx="5" ry="10"/><circle cx="160" cy="257" r="3"/><ellipse cx="240" cy="268" rx="5" ry="10"/><circle cx="240" cy="257" r="3"/><ellipse cx="200" cy="275" rx="5" ry="10"/><circle cx="200" cy="264" r="3"/></g><circle cx="320" cy="55" r="18" fill="#f0e6c8" opacity="0.9"/><circle cx="313" cy="50" r="15" fill="url(#kabSky)"/></svg>
+        <figcaption class="gallery-caption">
+          <div class="gallery-meta">Mekke · Mescid-i Harâm</div>
+          <div class="gallery-title">Kâbe-i Muazzama</div>
+          <p class="gallery-desc">Hz. İbrahim ve oğlu İsmail'in inşa ettiği Beytullah; tevhidin merkezi ve Müslümanların kıblesi.</p>
+        </figcaption>
+      </figure>
+
+      <figure class="gallery-card">
+        <svg class="gallery-svg" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><defs><radialGradient id="tvfBg" cx="0.5" cy="0.5" r="0.7"><stop offset="0%" stop-color="#e4dcc8"/><stop offset="100%" stop-color="#c4b896"/></radialGradient><radialGradient id="tvfRing" cx="0.5" cy="0.5" r="0.6"><stop offset="0%" stop-color="#8a8068" stop-opacity="0"/><stop offset="70%" stop-color="#6a6048" stop-opacity="0.5"/><stop offset="100%" stop-color="#4a4230" stop-opacity="0.7"/></radialGradient></defs><rect width="400" height="300" fill="url(#tvfBg)"/><circle cx="200" cy="150" r="170" fill="#ddd4bf"/><circle cx="200" cy="150" r="150" fill="none" stroke="#9a8e72" stroke-width="14" opacity="0.35" stroke-dasharray="6 4"/><circle cx="200" cy="150" r="128" fill="none" stroke="#8a7e64" stroke-width="14" opacity="0.45" stroke-dasharray="5 4"/><circle cx="200" cy="150" r="106" fill="none" stroke="#9a8e72" stroke-width="13" opacity="0.4" stroke-dasharray="6 4"/><circle cx="200" cy="150" r="86" fill="none" stroke="#8a7e64" stroke-width="12" opacity="0.5" stroke-dasharray="5 3"/><circle cx="200" cy="150" r="68" fill="none" stroke="#9a8e72" stroke-width="11" opacity="0.45" stroke-dasharray="5 3"/><circle cx="200" cy="150" r="52" fill="none" stroke="#8a7e64" stroke-width="10" opacity="0.55" stroke-dasharray="4 3"/><g stroke="#6a5e44" stroke-width="1" fill="none" opacity="0.25"><path d="M340 150 a140 140 0 0 1 -20 60"/><path d="M60 150 a140 140 0 0 1 20 -60"/></g><g><rect x="178" y="128" width="44" height="44" fill="#1e1a14" transform="rotate(8 200 150)"/><rect x="178" y="128" width="44" height="10" fill="#c9a84e" transform="rotate(8 200 150)"/></g><ellipse cx="200" cy="175" rx="30" ry="8" fill="#000" opacity="0.15"/><circle cx="200" cy="150" r="168" fill="none" stroke="#a89c7e" stroke-width="6" opacity="0.4"/></svg>
+        <figcaption class="gallery-caption">
+          <div class="gallery-meta">Hac · Tavaf</div>
+          <div class="gallery-title">Yıllık Tavaf</div>
+          <p class="gallery-desc">Milyonlarca insan, 4000 yıl önce bir baba ile oğulun attığı temelin etrafında dönüyor.</p>
+        </figcaption>
+      </figure>
+
+    </div>
+  </div>
+
+  <h3>Hac Ritüeli, Hz. İbrahim Ailesi Eşleştirme Tablosu</h3>
+  <div class="table-scroll">
+  <table>
+    <caption>Her Ritüel, Bir Aile Anısı</caption>
+    <thead>
+      <tr><th>Hac Unsuru</th><th>Kıssa Bağlantısı</th><th>Ana Mesaj</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Tavaf</strong></td><td>Hz. İbrahim'in inşa ettiği Beyt'in etrafında dönmek</td><td>Tevhid merkezine yönelim</td></tr>
+      <tr><td><strong>Sa'y (Safa-Merve)</strong></td><td>Hacer'in oğluna su arayışı</td><td>Tevekkül + gayret</td></tr>
+      <tr><td><strong>Zemzem içmek</strong></td><td>Cebrail'in açtığı kaynak</td><td>Allah'ın imkânsızda yarattığı bereket</td></tr>
+      <tr><td><strong>Şeytan taşlama (Cemerat)</strong></td><td>Vesveseye karşı simgesel direniş</td><td>İrade ve sadakat</td></tr>
+      <tr><td><strong>Kurban (Bayram)</strong></td><td>Baba-oğul teslimiyeti</td><td>Allah'a mutlak itaat</td></tr>
+      <tr><td><strong>Makâm-ı İbrahim</strong></td><td>Kâbe inşasında durduğu yer</td><td>İbadet mirasının somutlaşması</td></tr>
+      <tr><td><strong>Arafat'ta vakfe</strong></td><td>Tüm peygamberlerin Allah'a yöneldiği geleneksel mekân</td><td>Kulluğun zirvesi</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Hac'ın Hz. Muhammed (s.a.v.) ile Yeniden İhyası</h3>
+  <p>Hz. İbrahim'den sonra zaman içinde Kâbe putlarla doldu. Hz. Muhammed (s.a.v.) Mekke'yi fethettikten sonra (Hicri 8 / Miladi 630) Kâbe'yi putlardan temizledi ve Hac'ı Hz. İbrahim'in saf ihlasıyla yeniden ihya etti.</p>
+
+  <div class="hadis">
+    <span class="hadis-label">Hadis</span>
+    <div class="hadis-ref">Sahih Müslim, Kitâbü'l-Hac, No: 1297, Câbir b. Abdullah (r.a.)</div>
+    <div class="hadis-text">
+      <q>Hac menâsikinizi (ibadetlerinizi) benden öğrenin; çünkü bilemiyorum, bu yıldan sonra haccedebilecek miyim.</q>
+    </div>
+    <p style="font-size: 0.9rem; color: var(--ink-muted); font-style: italic; margin-top: 0.8rem;">Hz. Peygamber'in Veda Haccı'ndaki sözü, ümmeti için son talimat.</p>
+  </div>
+
+  <p>Bugün Kâbe'nin etrafında dönen o muazzam insan denizine bakıldığında, aslında 4000 yıl önce bir baba ile bir oğulun attığı temelin etrafındaki bir devinim görülür. Hacer'in koşturduğu kumlar hâlâ aynı kumlardır. İslâm'ın en büyük ibadetlerinden biri, sıradan görünen ama olağanüstü bir kadının, bir annenin, evladı için attığı telaşlı adımları yeniden canlandırmaktır. Bir dinin merkezî ibadetinde bir annenin koşusunun bu denli yüceltilmesi, o dinin kadına ve anneye verdiği değeri tek başına anlatır.</p>
+
+  <p>Hacer'in <em>"Allah bizi zayi etmez"</em> sözü ise tevekkülün en saf tarifidir: elinde hiçbir maddî imkân yokken, yalnızca Allah'a olan güveniyle ayakta durabilmek. Ama dikkat edilmelidir ki o, bu güvenle birlikte aynı zamanda <em>koştu</em> da. Gerçek tevekkül, edilgen bir bekleyiş değil; Allah'a güvenerek var gücüyle gayret etmektir.</p>
+
+  <div class="kopru">Hz. İbrahim sadece Müslümanların değil, başka iki büyük dinin de manevî atasıdır. Şimdi üç dinin onu nasıl gördüğüne ve nerede ayrıldıklarına bakalım.</div>
+</section>
+
+<!-- ===================================================
+     BÖLÜM 5, ÜÇ İBRAHİMÎ DİNDE HZ. İBRAHİM
+     =================================================== -->
+<section id="bolum-5">
+  <div class="section-num">Bölüm V</div>
+  <h2>Üç İbrahimî Dinde Hz. İbrahim <span class="h2-sub">Aynı Ata, Üç Hafıza</span></h2>
+
+  <div class="epigraph">
+    <p class="epigraph-text arabic">إِنَّ أَوْلَى ٱلنَّاسِ بِإِبْرَٰهِيمَ لَلَّذِينَ ٱتَّبَعُوهُ</p>
+    <p class="epigraph-text">"Şüphesiz, insanların İbrahim'e en yakın olanı, ona uyanlardır."</p>
+    <p class="epigraph-cite">Âl-i İmrân 3/68</p>
+  </div>
+
+  <p class="lead">Hz. İbrahim, dünya nüfusunun yarısından fazlasının saygı duyduğu eşsiz bir şahsiyettir. Ama her gelenek onu farklı bir vurguyla hatırlar.</p>
+
+  <h3>Yahudilikte, Avraham Avinu ("Babamız İbrahim")</h3>
+  <ul style="margin: 1rem 0 1.5rem 1.5rem; line-height: 1.8;">
+    <li><strong>Kimliği:</strong> İbrani milletinin biyolojik ve ruhsal atası.</li>
+    <li><strong>Kaynak:</strong> Tevrat'ın Yaratılış (Genesis) kitabı, özellikle 11-25. bölümler.</li>
+    <li><strong>Ahdin işareti:</strong> <strong>Sünnet (brit milah)</strong>. Yaratılış 17, ahdin Avraham, oğulları ve soyu için bir işaret olduğunu söyler.</li>
+    <li><strong>Kurban edilen oğul:</strong> <strong>İshak</strong> (Yaratılış 22). İbranicede bu olaya <em>"Akeda"</em> ("bağlama") denir.</li>
+    <li><strong>Soy hattı:</strong> Avraham → İshak → Yakub (İsrail) → 12 oğul → 12 İbrani kabilesi.</li>
+  </ul>
+
+  <h3>Hristiyanlıkta, "İman Atası" (Father of Faith)</h3>
+  <ul style="margin: 1rem 0 1.5rem 1.5rem; line-height: 1.8;">
+    <li><strong>Kimliği:</strong> Biyolojik atalıktan ziyade <strong>"İman Atası"</strong>.</li>
+    <li><strong>Ana metin:</strong> Pavlus'un <strong>Romalılar 4. bölüm</strong>'ü: <em>"Avraham Allah'a iman etti, bu ona doğruluk sayıldı."</em> Hristiyan teolojisinde Avraham'ın imanı, yasadan önce, sünnetten önce, iyi amellerden önce Allah'a iman etmiş olmasıyla değerlidir.</li>
+    <li><strong>Galatyalılar 3:7:</strong> <em>"İmana dayananlar İbrahim'in oğullarıdır."</em>, Burada biyolojik soydan iman soyuna geçiş yapılır.</li>
+    <li><strong>Kurban edilen oğul:</strong> İshak (Tevrat geleneği muhafaza edilmiştir).</li>
+    <li><strong>Simgesel yorum:</strong> Bazı Hristiyan yorumcular İshak'ın kurbanını, Hz. İsa'nın çarmıha gerilişini <em>önceden müjdeleyen bir işaret</em> olarak okur.</li>
+  </ul>
+
+  <h3>İslam'da, Halîlullah, Hanîf, İmam</h3>
+  <ul style="margin: 1rem 0 1.5rem 1.5rem; line-height: 1.8;">
+    <li><strong>Kimliği:</strong> Saf tevhidin (hanîf) temsilcisi. Hiçbir bozulmaya uğramamış İbrahimî dinin (<strong>Millet-i İbrahim</strong>) babası.</li>
+    <li><strong>Soy ilişkisi:</strong> Hem Hz. İsmail üzerinden <strong>Arapların ve Hz. Muhammed'in</strong> atası, hem Hz. İshak üzerinden <strong>İsrailoğullarının</strong> atası, yani <em>iki büyük peygamberlik damarının kaynağı</em>.</li>
+    <li><strong>Kurban edilen oğul:</strong> <strong>Hz. İsmail</strong> (cumhûr-i ulemânın görüşü).</li>
+  </ul>
+
+  <div class="ayet">
+    <div class="ayet-ref">Âl-i İmrân Suresi 3/67</div>
+    <p class="arabic">مَا كَانَ إِبْرَاهِيمُ يَهُودِيًّا وَلَا نَصْرَانِيًّا وَلَٰكِنْ كَانَ حَنِيفًا مُسْلِمًا وَمَا كَانَ مِنَ الْمُشْرِكِينَ</p>
+    <p class="okunus">Mâ kâne İbrâhîmü yehûdiyyen ve lâ nasrâniyyen ve lâkin kâne hanîfen müslimâ, ve mâ kâne minel-müşrikîn.</p>
+    <div class="meal">"İbrahim ne Yahudi idi ne de Hristiyan; o, Allah'ı bir tanıyan dosdoğru (hanîf) bir Müslümandı, müşriklerden de değildi."</div>
+  </div>
+
+  <h3>Karşılaştırmalı Sentez Tablosu</h3>
+  <div class="table-scroll">
+  <table>
+    <caption>Üç Dinde Hz. İbrahim, Vurgu Noktaları</caption>
+    <thead>
+      <tr><th>Konu</th><th>Yahudilik</th><th>Hristiyanlık</th><th>İslam</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Temel sıfat</strong></td><td>Halkın atası</td><td>İman atası</td><td>Hanîf, Halîlullah, İmam</td></tr>
+      <tr><td><strong>Kurban edilen oğul</strong></td><td>İshak (Akeda)</td><td>İshak (İsa'yı müjdeleyen işaret)</td><td><strong>İsmail</strong> (cumhur)</td></tr>
+      <tr><td><strong>Ana ahit işareti</strong></td><td>Sünnet (brit milah)</td><td>İman (Pavlus)</td><td>Tevhid + amel</td></tr>
+      <tr><td><strong>Soy / aidiyet</strong></td><td>Biyolojik (12 kabile)</td><td>Ruhî (iman ailesi)</td><td>Hem biyolojik hem ruhî</td></tr>
+      <tr><td><strong>Ana metin</strong></td><td>Yaratılış 11-25</td><td>Yaratılış + Romalılar 4</td><td>Kur'an (25 sûrede zikir)</td></tr>
+      <tr><td><strong>Kıble bağı</strong></td><td>Yok</td><td>Yok</td><td><strong>Kâbe</strong> (onun inşa ettiği)</td></tr>
+      <tr><td><strong>Çağdaş ritüel bağı</strong></td><td>Sünnet, Roş Aşana</td><td>Yok (simgesel)</td><td><strong>Hac, Kurban, Salli-Barik</strong></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Kurban Edilen Oğul Meselesi, Derinlikli Bir Bakış</h3>
+  <p>Tevrat'ta (Yaratılış 22:2): <em>"Sevdiğin biricik oğlun İshak'ı al ve Moriya diyarına git."</em></p>
+
+  <p>İslam alimlerinin Tevrat metnine yönelttiği eleştirel okuma:</p>
+  <ul style="margin: 1rem 0 1.5rem 1.5rem; line-height: 1.8;">
+    <li>Hz. İsmail, Hz. İbrahim'in <strong>ilk doğan oğlu</strong>ydu. Hz. İshak doğduğunda İsmail zaten hayattaydı.</li>
+    <li>"<strong>Biricik oğul</strong>" ifadesi, dolayısıyla İshak'tan önce bir tek oğul vardı olan <em>İsmail dönemine</em> ait bir metin kalıntısı olabilir.</li>
+    <li>Klasik İslamî kaynakların büyük çoğunluğu (İbn Kesîr, Taberî, vd.) kurban edilenin İsmail olduğu görüşündedir.</li>
+    <li><strong>Coğrafi destek:</strong> Kurbanın Mekke yakınlarında, <em>Mina</em>'da vuku bulduğu bilgisi; İsmail'in yaşadığı yer.</li>
+  </ul>
+
+  <h3>İslam'ın Temel Mesajı</h3>
+  <p>İslam, kendisini <strong>"yeni bir din" değil</strong>, <em>"Hz. İbrahim'in dininin ihyası"</em> olarak tanımlar.</p>
+
+  <div class="ayet">
+    <div class="ayet-ref">Hac Suresi 22/78 (kısmı)</div>
+    <p class="arabic">مِّلَّةَ أَبِيكُمْ إِبْرَاهِيمَ ۚ هُوَ سَمَّاكُمُ الْمُسْلِمِينَ</p>
+    <p class="okunus">...Millete ebîküm İbrâhîm, hüve semmâkümül-müslimîn...</p>
+    <div class="meal">"...Babanız İbrahim'in dinine uyun. O size 'Müslüman' adını verdi..."</div>
+  </div>
+
+  <p><strong>"Müslüman"</strong> kelimesinin kendisi bile Hz. İbrahim'e bağlanır.</p>
+
+  <p>Bu üç gelenek de aynı atayı paylaşır; üçü de Hz. İbrahim'i sever ve ondan gurur duyar. Aralarındaki farkları ise küçümseyici bir dille değil, her birinin kendi vurgusunu tanıyarak anlamak gerekir. İslâm'ın bu noktadaki temel iddiası şudur: Hz. İbrahim'i bir "Yahudi" ya da "Hristiyan" saymak zamansal olarak dahi imkânsızdır, çünkü bu dinler ondan sonra şekillenmiştir. Kur'an'a göre Hz. İbrahim'in saf tevhid dini sonradan farklılaşmış; İslâm ise onu yeniden o ilk, bozulmamış hâline döndürmüştür. Üç dinin ortak paydasında tek Tanrı, teslimiyet, misafirperverlik, dua ve evlat imtihanı yer alırken; ayrıştıkları noktalar Yahudilik'te sünnet ve etnik soy, Hristiyanlık'ta imanın yasanın önüne geçmesi, İslâm'da ise hanîflik, Kâbe, Hac ve Salli-Barik geleneğidir.</p>
+
+  <p>Aynı büyük atanın üç ayrı gelenekçe sahiplenilmesi, dinler tarihi açısından dikkat çekicidir: ayrıntılarda ayrışsalar da, bu ortak miras, insanlık için bir buluşma ve anlayış zemini sunma potansiyeli taşır.</p>
+
+  <div class="kopru">Şimdi başladığımız yere, yani namazımızdaki Salli-Barik duasına dönelim ve bu büyük adamın bize bıraktıklarını derleyelim.</div>
+</section>
+
+<!-- ===================================================
+     BÖLÜM 6, SONUÇ VE DEĞERLENDİRME
+     =================================================== -->
+<section id="bolum-6">
+  <div class="section-num">Bölüm VI</div>
+  <h2>Sonuç ve Değerlendirme <span class="h2-sub">Bugünün İnsanı İçin</span></h2>
+
+  <div class="epigraph">
+    <p class="epigraph-text arabic">يَوْمَ لَا يَنفَعُ مَالٌ وَلَا بَنُونَ ۝ إِلَّا مَنْ أَتَى ٱللَّهَ بِقَلْبٍ سَلِيمٍ</p>
+    <p class="epigraph-text">"O gün ne mal fayda verir ne de evlatlar; ancak Allah'a tertemiz bir kalp ile gelen müstesna."</p>
+    <p class="epigraph-cite">Şuarâ 26/88-89 &middot; Hz. İbrahim'in duasından</p>
+  </div>
+
+  <p class="lead">Hz. İbrahim sadece tarihi bir şahsiyet değil, bir <strong>yaşam modelidir</strong> (Millet-i İbrahim).</p>
+
+  <h3>Örnek Alınacak Temel Özellikleri</h3>
+  <ol style="margin: 1rem 0 1.5rem 1.5rem; line-height: 1.9;">
+    <li><strong>Tevhid</strong>, Değişen, batan, kaybolan hiçbir şeyi ilah edinmemek.</li>
+    <li><strong>Akıl</strong>, İnancı kör taklit değil, tefekkürle güçlendirmek (yıldız-ay-güneş iddianamesi).</li>
+    <li><strong>Cesaret</strong>, Babasına, kavmine, krala, ateşe karşı durabilmek; yalnız kalmaktan korkmamak.</li>
+    <li><strong>Teslimiyet (İslâm)</strong>, Allah'ın hükmüne bütünüyle rıza göstermek (kurban imtihanı).</li>
+    <li><strong>Hicret</strong>, Hak için yer/hâl değiştirebilmek; alışkanlıklardan, kibirden, konfordan ayrılabilmek.</li>
+    <li><strong>Dua</strong>, Hayatın her aşamasında Allah'a yönelmek; Kâbe'yi inşa ederken bile <em>"Rabbimiz, kabul buyur"</em> diyebilmek.</li>
+    <li><strong>Misafirperverlik</strong>, "Halîl İbrahim Sofrası" kavramının kökeni; meleklere kızarmış buzağı ikram etmesi (Hûd 69, Zariyat 24-27).</li>
+    <li><strong>Sabır ve incelik</strong>, Babasına bile <em>"babacığım"</em> diye hitap etmesi (Meryem 42-47). Hakikati savunurken saygıyı kaybetmemek.</li>
+    <li><strong>Aile mirası</strong>, İsmail ve İshak üzerinden devam eden peygamberlik çizgisi.</li>
+  </ol>
+
+  <h3>Salli-Barik'in Derin Anlamı</h3>
+  <p>Bütün bu hayat hikâyesinden sonra, başladığımız yere, her namazın son oturuşunda okuduğumuz Salli-Barik duasına, dönmenin tam zamanıdır. Peki neden günde defalarca, Hz. Muhammed'le (s.a.v.) birlikte Hz. İbrahim'i de anıyoruz? Üç sebepten dolayı.</p>
+  <p>Birincisi, <strong>Hz. Muhammed (s.a.v.) onun duasının cevabıdır.</strong> Bakara 129'da Hz. İbrahim <em>"Onlara bir peygamber gönder"</em> diye yakarmıştı; o peygamber Hz. Muhammed'di. Bir peygamberi sevmek, ona yol açan duayı da sevmektir. İkincisi, <strong>kıblemiz onun inşa ettiği Ev'dir.</strong> Hz. İbrahim'in elleriyle yükselttiği Kâbe'ye dönerek namaz kılarız; onu anmadan o Ev'e yönelişimiz eksik kalırdı. Üçüncüsü, <strong>İslâm onun millet-i hanîfinin ihyasıdır.</strong> Müslüman olmak, Hz. İbrahim'in yolunda olmaktır; onu her namazda anmak, bu kimliği her gün yeniden tazelemektir.</p>
+
+  <h3>Kapanış Ayeti</h3>
+  <div class="ayet">
+    <div class="ayet-ref">En'âm Suresi 6/79</div>
+    <p class="arabic">إِنِّي وَجَّهْتُ وَجْهِيَ لِلَّذِي فَطَرَ السَّمَاوَاتِ وَالْأَرْضَ حَنِيفًا وَمَا أَنَا مِنَ الْمُشْرِكِينَ</p>
+    <p class="okunus">İnnî veccehtü vechiye lillezî fataras-semâvâti vel-arda hanîfen ve mâ ene minel-müşrikîn.</p>
+    <div class="meal">"Ben yüzümü, gökleri ve yeri yaratan Allah'a hanîf olarak çevirdim; ben müşriklerden değilim."</div>
+  </div>
+
+  <h3>Günümüze Mesajlar, Modern Putlar</h3>
+  <p>Taştan putların kırıldığı çağ geride kaldı, ama putlaşma hiç bitmedi. Bugün insanın Allah'ın önüne geçirdiği nice sahte ilah vardır; ve Hz. İbrahim'in baltası, artık bu kalplere inmektedir:</p>
+
+  <div class="modern-putlar">
+    <div class="put-item"><strong>Beğenilme arzusu</strong>Sosyal medyada "like" ve onaylanma açlığı; varlığımızı başkalarının onayına bağlamak.</div>
+    <div class="put-item"><strong>Para ve tüketim</strong>Markaların kimlik haline gelmesi; sahip olduğumuz şeylerin "kim olduğumuzu" söylediğini sanmak.</div>
+    <div class="put-item"><strong>Kariyer ve "başarı"</strong>İnsanın yalnızca üretkenliğiyle, unvanıyla değerlendirilmesi.</div>
+    <div class="put-item"><strong>İdeolojiler</strong>Herhangi bir fikrin (siyasi, kültürel, akademik) Allah'ın önüne geçirilmesi.</div>
+    <div class="put-item"><strong>Beden imajı</strong>Fiziksel ideallerin tanrılaştırılması; aynanın put haline gelmesi.</div>
+    <div class="put-item"><strong>Telefon / ekran</strong>Dikkati çalan görünmez bir put; "uyandığımda ilk baktığım şey" sorusu.</div>
+    <div class="put-item"><strong>Ego ve "haklılık"</strong>Kendi nefsinin sözünü Allah'ın sözünden üstün tutmak.</div>
+    <div class="put-item"><strong>Korku</strong>Toplumun, kaybetmenin, yalnız kalmanın korkusunu Allah korkusunun önüne geçirmek.</div>
+  </div>
+
+  <p>Hz. İbrahim'in hayatı, bugünün insanına da seslenir. Bir gün en yakınlarımız bizden doğruluktan uzak bir şey istediğinde, onun gibi sevgiyle ama kararlılıkla durabilmek; hayatın "ateşe atılma" hissi veren anlarında, yalnız kalma, dışlanma, alay edilme korkusunda, onun sarsılmaz imanından güç alabilmek; Hacer'in çorak vadilerdeki <em>"Allah bizi zayi etmez"</em> tevekkülünü kendi vadilerimizde tekrarlayabilmek; ve yıldızlara bakıp Yaratıcı'yı bulan o aklı, bugün uzayı, galaksileri, kara delikleri inceleyen zihinle aynı çizgide görebilmek… İşte onun mirası budur.</p>
+
+  <p class="lead" style="border-left-color: var(--gold); font-size: 1.25rem; margin-top: 2.5rem;">4000 yıl önce, Mezopotamya çölünde gökyüzüne bakan bir çocuk vardı. Yıldızlara baktı, aya baktı, güneşe baktı, ve hepsinin battığını gördü. Sonra batmayanı buldu: Allah'ı. Bugün biz hâlâ, günde beş kez, secdelerimizden kalktığımızda onu anıyoruz. Çünkü o, hâlâ batmayanı gösteren elin sahibidir.</p>
+
+  <div class="pull-quote" style="margin-top: 3.5rem;">
+    <p class="pull-quote-text" style="font-size: 1.7rem;">Ve onun başlattığı yolculuk, <strong>Ur'dan Mekke'ye, taştan tevhide, ateşten esenliğe</strong>, bugün her secdede içimizden geçiyor.</p>
+  </div>
+
+  <div class="divider">⁂  ⁂  ⁂</div>
+</section>
+
+<!-- ===================================================
+     EK A: HİCRET HARİTASI (LEAFLET, SULUBOYA)
+     =================================================== -->
+<section id="harita" class="map-section">
+  <div class="section-num">Ek A · İnteraktif</div>
+  <h2>Hz. İbrahim'in Hicret Yolculuğu <span class="h2-sub">Ur'dan Mekke'ye 5 Durak</span></h2>
+
+  <p class="lead">Aşağıdaki harita Stamen Watercolor (suluboya) tile'larıyla render edilir. Beş numaralı işaretçiye tıklayarak her durağın tarihini ve İbrahimî yolculuktaki anlamını görebilirsiniz.</p>
+
+  <div class="map-wrapper">
+    <div id="hicret-map"></div>
+  </div>
+
+  <div class="map-legend">
+    <div class="map-legend-item">
+      <div class="map-legend-num">1</div>
+      <div class="map-legend-text">
+        <strong>Ur</strong>
+        <span>Mezopotamya · Bugünkü Güney Irak · Doğduğu şehir. Ay tanrısı Sîn'in Zigguratı burada.</span>
+      </div>
+    </div>
+    <div class="map-legend-item">
+      <div class="map-legend-num">2</div>
+      <div class="map-legend-text">
+        <strong>Harran</strong>
+        <span>Bugünkü Şanlıurfa · İlk hicret durağı. Tevrat'a göre babası Terah burada vefat etti.</span>
+      </div>
+    </div>
+    <div class="map-legend-item">
+      <div class="map-legend-num">3</div>
+      <div class="map-legend-text">
+        <strong>Kenan</strong>
+        <span>Bugünkü Filistin/Lübnan bölgesi · "Bereketli kıldığımız yerler" (Enbiya 71). Yerleşim merkezi.</span>
+      </div>
+    </div>
+    <div class="map-legend-item">
+      <div class="map-legend-num">4</div>
+      <div class="map-legend-text">
+        <strong>Mısır</strong>
+        <span>Kıtlık nedeniyle geçici göç · Zorba kral ve Hz. Sare hadisesi · Hz. Hacer'in aileye katılışı.</span>
+      </div>
+    </div>
+    <div class="map-legend-item">
+      <div class="map-legend-num">5</div>
+      <div class="map-legend-text">
+        <strong>Mekke</strong>
+        <span>Hicaz çölünde çorak vadi · Hz. Hacer ve İsmail'in bırakıldığı yer · Kâbe'nin inşa edileceği kutsal mekân.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="dikkat">
+    <span class="dikkat-label">Coğrafi Not</span>
+    <p>Yaklaşık mesafeler: Ur → Harran ≈ 1.200 km · Harran → Kenan ≈ 700 km · Kenan → Mısır ≈ 400 km · Kenan → Mekke ≈ 1.300 km. Toplamda yaklaşık <strong>3.000+ km</strong>'lik bir yolculuk, deve kervanlarıyla, çocuklarla, yaşlanan bir aileyle. Bu, sadece coğrafî değil, <em>fiziksel olarak da olağanüstü bir hicrettir.</em></p>
+  </div>
+</section>
+
+<!-- ===================================================
+     EK B: HADİS TAM METİNLERİ (TÜRKÇE)
+     =================================================== -->
+<section id="hadisler">
+  <div class="section-num">Ek B · Tam Metinler</div>
+  <h2>Hadis Metinleri <span class="h2-sub">Türkçe Tam Çeviriler</span></h2>
+
+  <p class="lead">Aşağıda metin boyunca atıfta bulunulan ana hadis kaynaklarının tam Türkçe metinleri verilmiştir.</p>
+
+  <!-- HADİS 1, Buhârî 6357 -->
+  <div class="hadis">
+    <span class="hadis-label">Hadis I</span>
+    <div class="hadis-ref">Sahih Buhârî, Kitâbü'd-Daavât, No: 6357, Ka'b b. Ucre (r.a.) rivayeti<br>
+    <em>Salli-Barik / Salât-ı İbrâhîmiyye'nin Öğrenilmesi</em></div>
+    <div class="hadis-text">
+      <q>Resûlullah (s.a.v.) yanımıza çıktı. Biz de "Ey Allah'ın Resûlü! Size nasıl selâm vereceğimizi (et-Tahiyyât duasında) öğrendik; peki size nasıl salât getireceğiz?" diye sorduk. Bunun üzerine şöyle buyurdu:</q>
+      <p style="margin-top: 1rem; padding-left: 1.5rem; border-left: 2px solid var(--burgundy);">
+      "Şöyle deyin: <strong>Allâhümme salli alâ Muhammedin ve alâ âli Muhammed, kemâ salleyte alâ İbrâhîme ve alâ âli İbrâhîm, inneke Hamîdün Mecîd. Allâhümme bârik alâ Muhammedin ve alâ âli Muhammed, kemâ bârekte alâ İbrâhîme ve alâ âli İbrâhîm, inneke Hamîdün Mecîd.</strong>" <br>
+      <em>(Anlamı: "Allah'ım! İbrahim'e ve âilesine rahmet ettiğin gibi Muhammed'e ve âilesine de rahmet et. İbrahim'e ve âilesine bereket verdiğin gibi Muhammed'e ve âilesine de bereket ver. Şüphesiz Sen övgüye lâyık ve şanı yücesin.")</em>
+      </p>
+    </div>
+    <p style="font-size: 0.92rem; color: var(--ink-muted); margin-top: 1rem;"><strong>Önemi:</strong> Bu hadis, namazın son oturuşunda her gün okuduğumuz duanın bizzat Hz. Peygamber'den (s.a.v.) ümmete intikalini gösterir. Salli-Barik bir gelenek değil, <em>nebevî bir öğretidir.</em></p>
+  </div>
+
+  <!-- HADİS 2, Buhârî 3358 -->
+  <div class="hadis">
+    <span class="hadis-label">Hadis II</span>
+    <div class="hadis-ref">Sahih Buhârî, Kitâbü'l-Enbiyâ, No: 3358, Ebû Hureyre (r.a.) rivayeti<br>
+    <em>Hz. İbrahim, Hz. Sare ve Zorba Kralın Kıssası</em></div>
+    <div class="hadis-text">
+      <q>Resûlullah (s.a.v.) şöyle buyurdu: "İbrahim (a.s.) hayatı boyunca yalnızca üç defa hakikati örten söz söylemiştir; bunlardan ikisi Allah'ın zatı uğrunadır: birincisi 'Ben hastayım' (Sâffât 89) demesi; ikincisi 'Bunu, şu büyükleri yapmıştır' (Enbiyâ 63) demesi. Üçüncüsü ise eşi Sare hakkındadır.</q>
+      <p style="margin-top: 1rem;">İbrahim, Sare ile birlikte yola çıkmış ve zorbalarından birinin ülkesine girmişti. Krala haber verildi: 'Buraya bir adam geldi; yanında dünyanın en güzel kadınlarından biri var.' Kral İbrahim'i çağırttı ve sordu: 'Bu kadın senin neyin?' İbrahim: 'O benim kız kardeşimdir' dedi. Sonra Sare'ye gelip şöyle dedi: 'Ey Sare! Yeryüzünde benden ve senden başka mümin yoktur. Bu zorba bana seni sorunca <strong>kız kardeşim olduğunu söyledim</strong> (yani din kardeşim). Sakın beni yalanlama!'</p>
+      <p style="margin-top: 1rem;">Kral Sare'yi yanına getirtti. Sare odaya girince, kral elini ona uzatmaya kalktı; ama eli kasıldı ve hareket edemez oldu. Kral şöyle yalvardı: 'Allah'a dua et benim için, sana asla zarar vermeyeceğim.' Sare dua etti, kralın eli açıldı. Bir kez daha elini uzatmaya kalktı; eli yine kasıldı, eskisinden de beter. Yine yalvardı, Sare yine dua etti, eli yine açıldı. Üçüncüsünde de aynı şey oldu. Sonunda kral korkuyla bağırdı: 'Bana bir cin/şeytan getirmişsiniz! Bu kadını çıkarın yanımdan!' Sare'yi serbest bıraktı ve ona Hacer adında bir cariye hediye etti.</p>
+      <p style="margin-top: 1rem;">Sare geri döndüğünde, İbrahim'in namaz kıldığını gördü. İbrahim eliyle 'Ne oldu?' diye işaret etti. Sare şöyle dedi: 'Allah, kâfirin/zorbanın hilesini boynuna geçirdi ve bana bir hizmetçi olarak Hacer'i verdi.'"</p>
+      <p style="margin-top: 1rem;"><em>Ebû Hureyre (r.a.) der ki:</em> "İşte ey gökyüzünün-suyunun oğulları (Araplar)! O Hacer, sizin annenizdir."</p>
+    </div>
+    <p style="font-size: 0.92rem; color: var(--ink-muted); margin-top: 1rem;"><strong>Önemi:</strong> Bu rivayet, Hz. Hacer'in soyluluğunu (kraliyet hediyesi olarak gelmesini), Allah'ın peygamberini ve eşini koruyuşunu, ve "kız kardeş" ifadesinin <em>din kardeşliği</em> olarak okunan tevriye boyutunu gösterir. Hz. İbrahim'in "yalan" söylemediği, fakat <em>iki anlama gelebilen sözcükler kullandığı</em> ortaya çıkar.</p>
+  </div>
+
+  <!-- HADİS 3, Müslim 2371 -->
+  <div class="hadis">
+    <span class="hadis-label">Hadis III</span>
+    <div class="hadis-ref">Sahih Müslim, Kitâbü'l-Fedâil, No: 2371, Ebû Hureyre (r.a.) rivayeti<br>
+    <em>Yukarıdaki Kıssanın Paralel Rivayeti</em></div>
+    <div class="hadis-text">
+      <q>Resûlullah (s.a.v.) şöyle buyurdu: "İbrahim (a.s.) bir zorbanın ülkesine girdi; yanında Sare vardı. Ona bildirildi: 'Burada bir adam var, yanında en güzel kadınlardan biri bulunuyor.' Zorba haber gönderip İbrahim'e Sare hakkında sordu. İbrahim: 'O benim kız kardeşimdir' dedi. Sonra Sare'ye gidip şöyle dedi: 'Ey Sare! Yeryüzünde benden ve senden başka mümin yok. Bu adam bana senin durumunu sorduğunda kız kardeşim olduğunu söyledim. Sakın beni yalanlama.'</q>
+      <p style="margin-top: 1rem;">Sare içeri girince kral elini uzattı, fakat eli tutuldu. Kral: 'Allah'a dua et de elimi geri ver, sana dokunmam' dedi. Sare dua etti, eli serbest kaldı. Bunu üç kez tekrarladı. Sonra kral en yakın hizmetçilerinden birini çağırdı ve dedi: 'Siz bana insan değil, şeytan getirmişsiniz. Onu çıkarın ve ona Hacer'i verin.' Hacer böylece Sare'ye hediye edildi.</p>
+      <p style="margin-top: 1rem;">Sare geri dönerek İbrahim'in yanına geldiğinde dedi ki: 'Sezdin mi? Allah, kâfirin hilesini başına geçirdi ve bana hizmet için bir kız verdi.'"</p>
+    </div>
+    <p style="font-size: 0.92rem; color: var(--ink-muted); margin-top: 1rem;"><strong>Not:</strong> Bu rivayet, Buhârî 3358'in paralel anlatımıdır. İki kaynakta da aynı kıssa, farklı kelime tercihleriyle aktarılmıştır. Sahih iki kaynakta birden geçmesi, hadisin sübutunu güçlendirir.</p>
+  </div>
+
+  <!-- HADİS 4, Buhârî 3365 -->
+  <div class="hadis">
+    <span class="hadis-label">Hadis IV</span>
+    <div class="hadis-ref">Sahih Buhârî, Kitâbü'l-Enbiyâ, No: 3365, İbn Abbas (r.a.) rivayeti<br>
+    <em>Hz. Hacer, Zemzem, Safa-Merve ve Kâbe'nin İnşası</em></div>
+    <div class="hadis-text">
+      <q>İbn Abbas (r.a.) anlatıyor: İbrahim (a.s.), Hacer ve sütteki çocuğu İsmail'i alıp yola çıktı. Onları Mekke vadisine, Beytullah'ın bulunacağı yerin üstünde, büyük bir ağacın yanına bıraktı. O gün Mekke'de su yoktu, hiç kimse de yoktu. İbrahim onların yanına bir deri tulum içinde hurma ve bir su kabı bıraktı. Sonra arkasına dönüp gitmeye başladı.</q>
+
+      <p style="margin-top: 1rem;">Hacer onun arkasından koşarak şöyle dedi: <strong>"Ey İbrahim! Konuşacak bir insanın, yiyeceğin ve içecek suyun olmadığı bu vadide bizi kime bırakıp gidiyorsun?"</strong> Bunu birkaç kez söyledi. İbrahim ona dönüp bakmadı bile. Sonunda Hacer: <strong>"Bunu sana Allah mı emretti?"</strong> diye sordu. İbrahim: <strong>"Evet"</strong> dedi. Bunun üzerine Hacer: <strong>"Öyleyse Allah bizi zayi etmez"</strong> dedi ve geri döndü.</p>
+
+      <p style="margin-top: 1rem;">İbrahim yoluna devam etti. Onların kendisini göremeyeceği bir tepeye varınca, yüzünü Beyt'in olacağı yere döndü ve ellerini açarak şu duayı yaptı: "Rabbim! Ben çocuklarımdan bir kısmını, senin Kutsal Evi'nin yanında, ekin bitmez bir vadiye yerleştirdim. Rabbimiz! Namazı dosdoğru kılsınlar diye böyle yaptım. İnsanların gönüllerini onlara meylettir; onları meyvelerle rızıklandır ki şükretsinler." (İbrahim 14/37)</p>
+
+      <p style="margin-top: 1rem;">Hacer İsmail'i emziriyor, kendi de sudan içiyordu. Su tükendiğinde, hem kendisi susadı, hem oğlu susadı. Çocuğu yerde debelenirken görmeye dayanamadı. Geri çekildi ve en yakın tepe olan <strong>Safa'ya</strong> çıktı. Vadiye bakındı: "Acaba birini görür müyüm?" diye baktı, kimseyi göremedi. Safa'dan indi; vadiye inince eteğini topladı, zorda kalmış bir insanın koşması gibi koştu, vadiyi geçti, <strong>Merve'ye</strong> çıktı, oradan baktı, kimseyi göremedi. Bunu <strong>yedi defa</strong> tekrarladı.</p>
+
+      <p style="margin-top: 1rem;"><em>İbn Abbas der ki:</em> Hz. Peygamber (s.a.v.) buyurdu: <strong>"İşte insanların Safa ile Merve arasında sa'y etmeleri (yedi kere koşmaları) bundan dolayıdır."</strong></p>
+
+      <p style="margin-top: 1rem;">Hacer son kez Merve'nin üzerine çıktığında bir ses işitti. Kendi kendine "Sus!" dedi ve kulak kabarttı; sesi yine duydu. "Sesini duyurdun" dedi, "eğer yardımın varsa..." Bir de baktı ki Zemzem'in olduğu yerde bir melek (Cebrail) duruyor; topuğuyla (ya da kanadıyla) yere vurdu, oradan <strong>su fışkırdı.</strong> Hacer hayretle suyun kenarlarını toprakla çevirmeye başladı; eliyle suyu kabına dolduruyor, su daha bol fışkırıyordu.</p>
+
+      <p style="margin-top: 1rem;">Hz. Peygamber (s.a.v.) buyurdu: <strong>"Allah, İsmail'in annesine rahmet etsin! Eğer Zemzem'i öyle çevirmeseydi (toprakla sınırlandırmasaydı), Zemzem akıp giden bir nehir olurdu."</strong></p>
+
+      <p style="margin-top: 1rem;">Melek Hacer'e dedi ki: <strong>"Korkma, helak olmazsınız. İşte burası Allah'ın Evi olacak yer; onu şu çocuk ve babası inşa edecek. Allah, kendi kullarını asla zayi etmez."</strong></p>
+
+      <p style="margin-top: 1rem;">Beyt'in olacağı yer çevresinden yüksek, bir tepe gibiydi; seller onun sağından ve solundan akıyordu. Hacer böylece orada yaşamaya devam etti. Bir süre sonra <strong>Curhum kabilesinden</strong> bir grup, "Kedâ" yolundan geçerken vadiye yakın bir yerde konakladılar. Gökyüzünde dönüp duran bir kuş gördüler. Birbirine: 'Bu kuş ancak suyun üzerinde döner; biz bu vadiyi bilirdik, burada su yoktu' dediler. Bir-iki kişi gönderdiler; gerçekten su buldular. Geri dönüp Hacer'in yanına geldiler ve: 'Bize burada konaklamamıza izin verir misin?' dediler. Hacer: 'Evet, ama suyun mülkiyeti sizin olmayacak' dedi. Onlar da kabul etti.</p>
+
+      <p style="margin-top: 1rem;">Hz. Peygamber (s.a.v.) buyurdu: <strong>"İşte bu Hacer'in çok hoşuna gitti; çünkü insanlarla beraber olmak istiyordu (yalnızlıktan kurtuluyordu)."</strong> Curhumlular orada yerleştiler, akrabalarına haber gönderdiler, onlar da geldi. İsmail büyüdü ve onlardan Arapça öğrendi; gençliğinde onların gözüne girdi ve büyüdüğünde onlardan biriyle evlendirildi.</p>
+
+      <p style="margin-top: 1rem;">(Hadis devam eder: Hz. İbrahim'in zaman zaman Mekke'yi ziyareti, oğlu İsmail ile birlikte <strong>Kâbe'nin temellerini yükseltişi</strong>, Makâm-ı İbrahim'in oluşumu ve "Rabbimiz, bizden kabul buyur" duasının okunuşu bu uzun rivayetin devamında yer alır.)</p>
+    </div>
+    <p style="font-size: 0.92rem; color: var(--ink-muted); margin-top: 1rem;"><strong>Önemi:</strong> Bu uzun hadis, hac ibadetinin <em>her bir ritüelinin kökenini</em> bizzat Hz. Peygamber'in ağzından açıklar. Sa'y'in Hacer'in koşusu olduğu, Zemzem'in mucize kaynak olduğu, Curhum'un Mekke'nin ilk yerlilerini oluşturduğu, ve Hz. İsmail'in Arapça'yı sonradan öğrendiği bu rivayetten gelmektedir. Bu yönüyle, konuyla ilgili en zengin tek hadis kaynağıdır.</p>
+  </div>
+
+  <div class="dikkat">
+    <span class="dikkat-label">Kaynak Erişimi</span>
+    <p>Hadislerin Arapça orijinal metinleri ve farklı tercümeleri için <em>sunnah.com</em> (uluslararası), <em>hadislerleislam.diyanet.gov.tr</em> (Diyanet İşleri Başkanlığı'nın Türkçe portalı) güvenilir referanslardır. Diyanet'in <em>Hadislerle İslâm</em> setinde Hz. İbrahim rivayetleri tematik olarak gruplanmıştır.</p>
+  </div>
+</section>
+
+<!-- ===================================================
+     ANAHTAR KAVRAMLAR
+     =================================================== -->
+<section id="anahtar">
+  <div class="section-num">Ek C</div>
+  <h2>Anahtar Kavramlar</h2>
+  <div class="anahtar-kavramlar">
+    <p><strong>Tevhid</strong>Allah'ı tek olarak bilmek; eşi-ortağı yoktur.</p>
+    <p><strong>Hanîf</strong>Eğri yollardan dönmüş saf tevhid çizgisi.</p>
+    <p><strong>Halîlullah</strong>Allah'ın dostu; Hz. İbrahim'in Kur'anî unvanı.</p>
+    <p><strong>Ebu'l-Enbiyâ</strong>Peygamberler babası (geleneksel lakap; Kur'an'da geçmez).</p>
+    <p><strong>İslâm</strong>Allah'a teslim olmak; barış ve esenlik.</p>
+    <p><strong>Millet-i İbrahim</strong>Hz. İbrahim'in dini; saf tevhid çizgisi.</p>
+    <p><strong>Hicret</strong>Hak için yer veya hâl değiştirme.</p>
+    <p><strong>Tevekkül</strong>Güvenerek gayret etmek (Hacer örneği).</p>
+    <p><strong>İddianame</strong>Hz. İbrahim'in gök tanrılarına karşı kurduğu akli savcılık.</p>
+    <p><strong>Zemzem</strong>Cebrail'in açtığı, Mekke vadisindeki mucize kaynak.</p>
+    <p><strong>Makâm-ı İbrahim</strong>Kâbe inşa edilirken üzerinde durduğu taş.</p>
+    <p><strong>Safa-Merve</strong>Hz. Hacer'in oğluna su aramak için yedi kez koştuğu tepeler.</p>
+    <p><strong>Sa'y</strong>Hacer'in arayışının ibadet hâli; tevekkül + gayret.</p>
+    <p><strong>Kurban</strong>Allah için en sevdiğinden vazgeçebilmenin simgesi.</p>
+    <p><strong>Nemrut</strong>Tanrılık iddiasındaki zorba kralın örnek tipi.</p>
+    <p><strong>Âzer / Terah</strong>Hz. İbrahim'in babası; Kur'an ve Tevrat'taki iki ad.</p>
+    <p><strong>Sare / Hacer</strong>Hz. İbrahim'in iki eşi; iki annelik mirası.</p>
+    <p><strong>İsmail / İshak</strong>İki oğlu; iki peygamberlik damarı.</p>
+    <p><strong>Ziggurat</strong>Mezopotamya'nın basamaklı çok tanrılı tapınakları.</p>
+    <p><strong>Sîn (Nanna)</strong>Ur'un ay tanrısı; Hz. İbrahim'in iddianamesinde 2. sanık.</p>
+    <p><strong>Şamaş (Utu)</strong>Adaletin güneş tanrısı; 3. sanık.</p>
+    <p><strong>İştar (İnanna)</strong>Venüs/yıldız tanrıçası; 1. sanık.</p>
+    <p><strong>Akeda</strong>Yahudilikte İshak'ın "bağlanması", kurban kıssası.</p>
+    <p><strong>Salli-Barik</strong>Salât-ı İbrâhîmiyye; namazda her gün okunan dua.</p>
+  </div>
+</section>
+
+<!-- ===================================================
+     KAYNAKÇA
+     =================================================== -->
+<section id="kaynakca" class="kaynakca">
+  <div class="section-num">Ek D</div>
+  <h2>Kaynakça ve İleri Okumalar</h2>
+
+  <h4>Birincil Kaynaklar (Kur'an okumaları)</h4>
+  <ul>
+    <li><strong>Enbiyâ 21/51-73</strong>, Putların kırılışı ve ateş kıssası</li>
+    <li><strong>En'âm 6/74-83</strong>, Yıldız-Ay-Güneş iddianamesi</li>
+    <li><strong>Sâffât 37/100-113</strong>, Kurban imtihanı</li>
+    <li><strong>Bakara 2/124-141</strong>, Kâbe inşası ve dualar</li>
+    <li><strong>İbrahim 14/35-41</strong>, Mekke duaları</li>
+    <li><strong>Hac 22/26-29, 78</strong>, Haccın ilanı ve "Müslüman" adı</li>
+    <li><strong>Âl-i İmrân 3/67</strong>, Hz. İbrahim'in kimliği (hanîf)</li>
+    <li><strong>Meryem 19/41-50</strong>, Babasıyla diyaloğu</li>
+    <li><strong>Bakara 2/258</strong>, Nemrut ile diyalog</li>
+    <li><strong>Ankebut 29/26</strong>, "Ben Rabbime hicret ediyorum"</li>
+  </ul>
+
+  <h4>Hadis Kaynakları</h4>
+  <ul>
+    <li><strong>Sahih Buhârî No: 3365</strong>, Hacer, Zemzem, Safa-Merve, Kâbe inşası (uzun rivayet)</li>
+    <li><strong>Sahih Buhârî No: 6357</strong>, Salli-Barik / Salât-ı İbrâhîmiyye</li>
+    <li><strong>Sahih Buhârî No: 3358</strong>, Hz. Sare ve zorba kral kıssası</li>
+    <li><strong>Sahih Müslim No: 2371</strong>, Aynı kıssanın paralel rivayeti</li>
+    <li><strong>Sahih Müslim No: 1297</strong>, "Hac menâsikinizi benden öğrenin"</li>
+    <li><strong>Ahmed b. Hanbel, Müsned IV/127</strong>, "Ben atam İbrahim'in duasıyım"</li>
+  </ul>
+
+  <h4>Klasik İslamî Kaynaklar</h4>
+  <ul>
+    <li>İbn Kesîr, <em>el-Bidâye ve'n-Nihâye</em> (Türkçe: Büyük İslam Tarihi, Çağrı Yayınları), Hz. İbrahim bölümü</li>
+    <li>İbn Kesîr, <em>Tefsîrü'l-Kur'âni'l-Azîm</em>, Bakara 258, Enbiyâ 51-70, Sâffât 100-111 yorumları</li>
+    <li>Taberî, <em>Târîh</em>, Hz. İbrahim bölümü</li>
+    <li>Muhammed Hamidullah, <em>İslam Peygamberi</em>, Mekke ve Kâbe tarihi için</li>
+    <li>Mevlana Şiblî Numânî, <em>Sîretü'n-Nebî</em>, Hz. İbrahim ile Hz. Muhammed bağlantısı</li>
+  </ul>
+
+  <h4>Çağdaş Öneriler</h4>
+  <ul>
+    <li>Ali Şeriati, <em>Hac</em>, Özellikle "İbrahim, İsmail ve Hacer" bölümü; lise gencinin ufkunu açan edebî güçlü bir kitap</li>
+    <li>Diyanet İşleri Başkanlığı, <em>Hadislerle İslâm</em> (7 cilt), Tematik hadis derlemesi</li>
+  </ul>
+
+  <h4>Karşılaştırmalı Din Kaynakları</h4>
+  <ul>
+    <li>Tevrat / Yaratılış 11-25 (özellikle 17. bölüm, sünnet ahdi; 22. bölüm, Akeda)</li>
+    <li>İncil / Romalılar 4, Pavlus'un Avraham yorumu</li>
+    <li>İncil / Galatyalılar 3, "İmana dayananlar İbrahim'in oğullarıdır"</li>
+    <li>Reuven Firestone, <em>Journeys in Holy Lands</em>, İsmail ve İbrahim efsanelerinin İslamî tefsirde gelişimi (akademik)</li>
+  </ul>
+
+  <h4>Arkeoloji-Tarih Kaynakları</h4>
+  <ul>
+    <li>Sir Leonard Woolley, <em>Ur: The First Phases</em>, Ur kazılarının ana raporu</li>
+    <li>Britannica, "Abraham" ve "Ziggurat of Ur" maddeleri</li>
+    <li>Penn Museum, Ur Expedition arşivleri, <em>penn.museum</em></li>
+    <li>Smarthistory, "Ziggurat of Ur", eğitim amaçlı ayrıntılı analiz</li>
+    <li>British Museum, "Standard of Ur" sayfası, <em>britishmuseum.org</em></li>
+    <li>Met Museum, "The Origins of Writing", çivi yazısının tarihi</li>
+  </ul>
+
+  <div class="divider">⁂  ⁂  ⁂</div>
+</section>
+
+</div><!-- .lesson-book -->
+
+<!-- ===================================================
+     SVG SULUBOYA FİLTRESİ, Son çare (OSM tile'larını suluboya hissi vermek için)
+     =================================================== -->
+<svg width="0" height="0" style="position:absolute;visibility:hidden;">
+  <defs>
+    <filter id="watercolor-effect">
+      <feTurbulence type="fractalNoise" baseFrequency="0.025" numOctaves="2" seed="5" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="4" xChannelSelector="R" yChannelSelector="G"/>
+      <feGaussianBlur stdDeviation="0.4"/>
+      <feColorMatrix values="1.05 0 0 0 0
+                             0 1 0 0 0.02
+                             0 0 0.95 0 0.04
+                             0 0 0 1 0"/>
+    </filter>
+  </defs>
+</svg>
+
+<!-- ===================================================
+     LEAFLET HARİTASI, SCRIPT
+     =================================================== -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+  // Hicret yolculuğunun 5 noktası
+  var stops = [
+    {
+      num: 1,
+      name: 'Ur',
+      modernName: 'Tell el-Muqayyar, Irak',
+      coords: [30.9625, 46.1027],
+      desc: 'Hz. İbrahim\'in doğduğu şehir. Ay tanrısı Sîn\'in Zigguratı burada inşa edilmişti. Tevhid mücadelesinin başladığı yer.',
+      era: 'MÖ ~2000-1800'
+    },
+    {
+      num: 2,
+      name: 'Harran',
+      modernName: 'Şanlıurfa, Türkiye',
+      coords: [36.8617, 39.0317],
+      desc: 'İlk hicret durağı. Tevrat\'a göre babası Terah burada vefat etti. Türkiye\'deki en köklü İbrahimî gelenek (Balıklı Göl) burada yaşar.',
+      era: 'Hicretin başlangıcı'
+    },
+    {
+      num: 3,
+      name: 'Kenan',
+      modernName: 'Filistin / Lübnan bölgesi',
+      coords: [31.5326, 35.0998],
+      desc: '"Bereketli kıldığımız yerler" (Enbiyâ 71). Yeğeni Hz. Lût\'la birlikte yerleştikleri bölge. Hz. İshak burada doğdu.',
+      era: 'Yerleşim dönemi'
+    },
+    {
+      num: 4,
+      name: 'Mısır',
+      modernName: 'Memphis civarı, Mısır',
+      coords: [29.8500, 31.2500],
+      desc: 'Kıtlık nedeniyle geçici göç. Zorba kralın Hz. Sare\'ye saldırı girişimi ve Allah\'ın koruyuşu. Hz. Hacer\'in aileye katılışı.',
+      era: 'Geçici göç'
+    },
+    {
+      num: 5,
+      name: 'Mekke',
+      modernName: 'Mekke-i Mükerreme, Suudi Arabistan',
+      coords: [21.4225, 39.8262],
+      desc: 'Hz. Hacer ve bebek İsmail\'in çorak vadiye bırakıldığı yer. Zemzem\'in fışkırışı, Curhum kabilesinin yerleşimi, Kâbe\'nin inşası.',
+      era: 'Yolculuğun hedefi'
+    }
+  ];
+
+  // Haritayı oluştur
+  var map = L.map('hicret-map', {
+    center: [29.5, 40.0],
+    zoom: 5,
+    scrollWheelZoom: false,
+    zoomControl: true,
+    attributionControl: true
+  });
+
+  // Birincil: Stamen Watercolor, Cooper Hewitt arşivi (Stamen'in 2023'te kapanan
+  // orijinal suluboya tile'ları Cooper Hewitt müzesi tarafından arşivlenmiştir).
+  var watercolor = L.tileLayer('https://watercolormaps.collection.cooperhewitt.org/tile/watercolor/{z}/{x}/{y}.jpg', {
+    attribution: 'Tiles &copy; <a href="https://stamen.com/">Stamen Design</a>, CC BY 3.0, via <a href="https://collection.cooperhewitt.org/">Cooper Hewitt</a>. Data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    maxZoom: 16,
+    minZoom: 1,
+    crossOrigin: true
+  });
+
+  // Yedek: Stadia Maps üzerinden aynı stil (Cooper Hewitt erişilemezse)
+  var watercolorFallback = L.tileLayer('https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg', {
+    attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a> &copy; <a href="https://stamen.com/">Stamen Design</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    maxZoom: 12,
+    minZoom: 1,
+    crossOrigin: true
+  });
+
+  // Son çare: OSM + CSS suluboya filtresi (offline veya tüm tile'lar başarısız olursa)
+  var osmWithFilter = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxZoom: 12,
+    minZoom: 1,
+    className: 'osm-watercolor-filter'
+  });
+
+  // Birincil katmanı ekle, hata durumunda fallback'e geç
+  var primaryFailed = 0;
+  watercolor.on('tileerror', function() {
+    primaryFailed++;
+    if (primaryFailed > 3 && !map.hasLayer(watercolorFallback)) {
+      map.removeLayer(watercolor);
+      watercolorFallback.addTo(map);
+      var fallbackFailed = 0;
+      watercolorFallback.on('tileerror', function() {
+        fallbackFailed++;
+        if (fallbackFailed > 3 && !map.hasLayer(osmWithFilter)) {
+          map.removeLayer(watercolorFallback);
+          osmWithFilter.addTo(map);
+        }
+      });
+    }
+  });
+  watercolor.addTo(map);
+
+  // Numaralı marker stili (kullanıcının görüntüsündeki kahverengi daire)
+  function createNumberMarker(num) {
+    return L.divIcon({
+      className: '',
+      html: '<div class="hicret-marker" style="background:#7a1f24;color:#f4ead5;border:3px solid #fffaf0;border-radius:50%;font-family:Cinzel,serif;font-weight:700;font-size:15px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(0,0,0,0.4);">' + num + '</div>',
+      iconSize: [34, 34],
+      iconAnchor: [17, 17],
+      popupAnchor: [0, -17]
+    });
+  }
+
+  // Her durak için marker ve popup
+  var markerCoords = [];
+  stops.forEach(function(stop) {
+    var marker = L.marker(stop.coords, { icon: createNumberMarker(stop.num) }).addTo(map);
+
+    var popupContent =
+      '<div style="font-family:EB Garamond,serif;min-width:240px;">' +
+        '<div style="font-family:Cinzel,serif;font-size:0.7rem;letter-spacing:0.2em;color:#a67c2e;text-transform:uppercase;margin-bottom:0.2rem;">' + stop.era + '</div>' +
+        '<div style="font-family:Cormorant Garamond,serif;font-weight:600;font-style:italic;font-size:1.4rem;color:#7a1f24;line-height:1.1;">' + stop.num + '. ' + stop.name + '</div>' +
+        '<div style="font-size:0.85rem;color:#6b4a36;font-style:italic;margin-bottom:0.5rem;">' + stop.modernName + '</div>' +
+        '<div style="font-size:0.92rem;line-height:1.5;color:#2a1810;">' + stop.desc + '</div>' +
+      '</div>';
+
+    marker.bindPopup(popupContent, { maxWidth: 280 });
+    markerCoords.push(stop.coords);
+  });
+
+  // Hicret çizgisini çiz (kesik kesik)
+  var hicretLine = L.polyline(markerCoords, {
+    color: '#7a1f24',
+    weight: 2.5,
+    opacity: 0.7,
+    dashArray: '6, 10'
+  }).addTo(map);
+
+  // Türkiye odaklı görünüm
+  map.fitBounds(L.latLngBounds(markerCoords).pad(0.15));
+
+  // Tıklamadan sonra scroll'u aktive et
+  map.on('focus', function() { map.scrollWheelZoom.enable(); });
+  map.on('blur', function() { map.scrollWheelZoom.disable(); });
+
+});
+</script>
+
+</body>
+</html>
